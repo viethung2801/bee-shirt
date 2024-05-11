@@ -1,0 +1,63 @@
+<div class="main-heading">
+  <div class="container-fluid">
+    <div class="headerNewe">
+      <div>
+        <div class="page-icon">
+          <i [className]="icon"></i>
+        </div>
+        <div class="page-title">
+          <h5>{{ title }}</h5>
+          <h6 class="sub-heading">
+            Chào Mừng Bạn - BeeShirt Admin {{ mainHeading }}
+          </h6>
+        </div>
+      </div>
+
+      <div class="iconnav pointer" (click)="toggleNotices()">
+        <i class="iconThongBao fa-solid fa-bell"></i>
+        <span class="quantity1">{{ unreadNotifQuantity }}</span>
+
+        <div class="popUpThongBao" *ngIf="isNoticesShow">
+          <div>
+            <div class="headerPopup">
+              <span style="color: black; font-weight: bold">Thông Báo</span>
+            </div>
+
+            <div class="container-noti">
+              <a
+                class="notification notification-flush notification-unread"
+                *ngFor="let notif of notifications"
+                [href]="notif.relatedUrl"
+                (click)="setIsRead(notif.id)"
+              >
+                <div class="notification-avatar">
+                  <div class="avatar avatar-2xl mr-3">
+                    <div class="avatar-name rounded-circle">
+                      <span>BEE</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="notification-body">
+                  <p class="mb-1">
+                    <a class="notif-link">{{ notif.content }}</a>
+                  </p>
+                  <span class="notification-time"
+                    ><span class="mr-1" role="img" aria-label="Emoji">💬</span
+                    >{{ notif.time | date : "dd-MM-yyyy HH:mm" }}</span
+                  >
+                </div>
+                <div>
+                  <div class="trangThai" *ngIf="!notif.read"></div>
+                </div>
+              </a>
+            </div>
+
+            <div class="text-center mt-3" *ngIf="notifications.length === 0">
+              <i>Không có thông báo nào!</i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

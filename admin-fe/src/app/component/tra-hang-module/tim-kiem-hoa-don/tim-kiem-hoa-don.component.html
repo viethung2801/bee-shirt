@@ -1,0 +1,87 @@
+<div class="card mt-5">
+  <div class="card-header">
+    <strong>Tìm Kiếm Hoá Đơn</strong>
+  </div>
+  <div class="card-body">
+    <div class="row justify-content-center">
+      <div class="d-flex col-md-8 justify-content-center">
+        <div class="input-group-prepend">
+          <strong class="input-group-text">Mã Hoá Đơn</strong>
+        </div>
+        <nz-input-group [nzSuffix]="inputClearTpl">
+          <input
+            type="text"
+            nz-input
+            placeholder="Mã hoá đơn....."
+            [(ngModel)]="maHoaDon"
+            width="500"
+          />
+        </nz-input-group>
+        <button class="btn btn-primary rounded ml-2" (click)="submitForm()">
+          <i class="fa-solid fa-magnifying-glass fa-2xl"></i>
+        </button>
+        <button
+          class="btn btn-primary rounded ml-2"
+          id="add-button"
+          data-toggle="modal"
+          data-target="#formQRCode"
+          data-whatever="@mdo"
+        >
+          <i class="fa-solid fa-qrcode"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #inputClearTpl>
+  <span
+    nz-icon
+    class="ant-input-clear-icon"
+    nzTheme="fill"
+    nzType="close-circle"
+    (click)="maHoaDon = null"
+  ></span>
+</ng-template>
+
+<div
+  class="modal fade"
+  id="formQRCode"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="formQR"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          id="closeFormQRCode"
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ngx-scanner-qrcode
+          #action="scanner"
+          (event)="onEvent($event, action)"
+        ></ngx-scanner-qrcode>
+        <div class="text-center">
+          <p *ngIf="action.isLoading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+          </p>
+          <button
+            class="btn btn-primary btn-rounded"
+            (click)="action.isStart ? action.stop() : action.start()"
+          >
+            {{ action.isStart ? "Stop" : "Start" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

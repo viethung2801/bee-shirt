@@ -1,0 +1,21 @@
+<app-main-heading
+  [icon]="'icon ph ph-storefront'"
+  [mainHeading]="'Trả Hàng'"
+  [title]="'Trả Hàng'"
+></app-main-heading>
+
+<div class="row gutters">
+  <div class="col col-md-12">
+    <nz-result
+      nzStatus="success"
+      nzTitle="Trả Hàng Thành Công!"
+      nzSubTitle="Bạn đừng quên xin lỗi khách hàng về sản phẩm của cửa hàng nhé. Đừng quên giới thiệu các chương trình ưu đãi của cửa hàng chúng ta nhé!"
+    >
+      <div nz-result-extra>
+        <button [routerLink]="'/hoa-don/ql-hoa-don'" nz-button>
+          Về quản lý hoá đơn
+        </button>
+      </div>
+    </nz-result>
+  </div>
+</div>

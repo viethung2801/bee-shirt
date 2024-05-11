@@ -1,0 +1,27 @@
+<app-main-heading
+  [icon]="'icon ph ph-storefront'"
+  [mainHeading]="'Trả Hàng'"
+  [title]="'Trả Hàng'"
+></app-main-heading>
+
+<!-- Tìm Kiếm Hoá Đơn -->
+
+<div class="row gutters">
+  <div class="col col-md-12">
+    <app-tim-kiem-hoa-don
+      (findHoaDon)="setHoaDonRequest($event)"
+    ></app-tim-kiem-hoa-don>
+  </div>
+</div>
+
+<div class="row gutters">
+  <div class="col col-md-12">
+    <app-quy-dinh></app-quy-dinh>
+  </div>
+</div>
+<!-- Thông Tin Trả Hàng -->
+<div class="row gutters">
+  <div class="col col-md-12">
+    <app-chi-tiet-hoa-don [hoaDon]="hoaDon"></app-chi-tiet-hoa-don>
+  </div>
+</div>

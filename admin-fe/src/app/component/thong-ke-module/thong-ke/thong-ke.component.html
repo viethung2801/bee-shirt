@@ -1,0 +1,221 @@
+<app-main-heading
+  [icon]="'fa-solid icon-chart-area-outline'"
+  [mainHeading]="'Trang Chủ'"
+  [title]="'Trang Chủ'"
+></app-main-heading>
+
+<!-- Thông Tin Đơn Hàng -->
+<div class="row gutters mt-2">
+  <div class="col-md-12 col-sm-12">
+    <div class="row gutters">
+      <div class="col-md-3 col-sm-6">
+        <div class="info-stats4">
+          <div class="icon-type pull-left">
+            <i
+              class="fa-solid fa-circle-exclamation fa-2xl"
+              style="color: #74c0fc"
+            ></i>
+          </div>
+          <div class="sale-num">
+            <h4>{{ tongSoDonMoi }} Đơn Đang Xử Lý</h4>
+            <p>Đang chờ được xác nhận</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="info-stats4">
+          <div class="icon-type pull-left">
+            <i class="fa-solid fa-truck fa-2xl" style="color: #74c0fc"></i>
+          </div>
+          <div class="sale-num">
+            <h4>{{ tongSoDonChoGiao }} Đơn Đang Giao</h4>
+            <p>Đang được giao hàng</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="info-stats4">
+          <div class="icon-type pull-left">
+            <i
+              class="fa-solid fa-circle-check fa-2xl"
+              style="color: #74c0fc"
+            ></i>
+          </div>
+          <div class="sale-num">
+            <h4>{{ tongSoDonHoanThanh }} Đơn Hoàn Thành</h4>
+            <p>Đã hoàn thành</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="info-stats4">
+          <div class="icon-type pull-left">
+            <i class="icon-assignment_turned_in"></i>
+          </div>
+          <div class="sale-num">
+            <h4>{{ tongSoDonHuy }} Đơn Đã Huỷ</h4>
+            <p>Đã bị huỷ</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Thống Kê -->
+<div class="row gutters">
+  <div class="col col-md-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Chỉ Số Lợi Nhuận Và Đơn Hàng</strong>
+      </div>
+      <div class="card-body">
+        <app-static-sales
+          [doanhThuNamHienTai]="listDoanhThuTrongNamHienTai"
+          [doanhThuNamTruoc]="listDoanhThuTrongNamTruoc"
+        ></app-static-sales>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Biểu Đồ Đơn Hoàn Thành -->
+<!-- Biểu Đồ Khách Hàng Mới -->
+<div class="row gutters">
+  <div class="col-md-6 col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Biểu Đồ Đơn Hàng Hoàn Thành</strong>
+        <div>
+          <button
+            (click)="setChart('week')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tuần
+          </button>
+          <button
+            (click)="setChart('month')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tháng
+          </button>
+          <button
+            (click)="setChart('year')"
+            class="btn btn-primary rounded m-1"
+          >
+            Năm
+          </button>
+        </div>
+      </div>
+      <div class="card-body graph-container">
+        <div class="card-body">
+          <app-line-chart [tenChart]="tenChart"></app-line-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6 col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Biểu Đồ Khách Hàng Mới</strong>
+
+        <div>
+          <button
+            (click)="setCustomerChart('week')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tuần
+          </button>
+          <button
+            (click)="setCustomerChart('month')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tháng
+          </button>
+          <button
+            (click)="setCustomerChart('year')"
+            class="btn btn-primary rounded m-1"
+          >
+            Năm
+          </button>
+        </div>
+      </div>
+      <div class="card-body graph-container">
+        <div class="card-body">
+          <app-line-chart-customer
+            [tenChart]="tenChartCustomer"
+          ></app-line-chart-customer>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Biểu Đồ Doanh Thu -->
+<div class="row gutters mt-2">
+  <div class="col col-md-12 col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Biểu Đồ Doanh Thu</strong>
+        <div>
+          <button
+            (click)="setSaleChart('week')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tuần
+          </button>
+          <button
+            (click)="setSaleChart('month')"
+            class="btn btn-primary rounded m-1"
+          >
+            Tháng
+          </button>
+          <button
+            (click)="setSaleChart('year')"
+            class="btn btn-primary rounded m-1"
+          >
+            Năm
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <app-line-chart-sale [tenChart]="tenChartSale"></app-line-chart-sale>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Biểu Đồ Phiếu Giảm Giá -->
+<!-- Biểu Đồ Đợt Giảm Giá -->
+<div class="row gutters">
+  <div class="col col-md-6 col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Biểu Đồ Phiếu Giảm Giá Được Sử Dụng</strong>
+        <nz-date-picker
+          nzMode="year"
+          [(ngModel)]="datePhieuGiamGia"
+        ></nz-date-picker>
+      </div>
+      <div class="card-body">
+        <app-pie-chart [date]="datePhieuGiamGia"></app-pie-chart>
+      </div>
+    </div>
+  </div>
+  <div class="col col-md-6 col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <strong>Biểu Đồ Sản Phẩm Được Mua Từ Các Đợt Giảm Giá</strong>
+        <nz-date-picker
+          nzMode="year"
+          [(ngModel)]="dateDotGiamGia"
+        ></nz-date-picker>
+      </div>
+      <div class="card-body">
+        <app-pie-discount-chart
+          [date]="dateDotGiamGia"
+        ></app-pie-discount-chart>
+      </div>
+    </div>
+  </div>
+</div>

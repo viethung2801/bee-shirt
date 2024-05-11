@@ -1,0 +1,779 @@
+<app-main-heading
+  [icon]="'fa-solid fa-shirt'"
+  [mainHeading]="'Sản phẩm'"
+  [title]="'Sản phẩm'"
+></app-main-heading>
+
+<div class="row gutters pt-2">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="mb-4">
+          Danh sách sản phẩm chi tiết ({{ pagedResponse?.totalElements }})
+        </h3>
+        <!-- <div>
+          <div class="col col-md-12 d-flex">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-left">
+              <b class="form-label">Lọc theo giá bán</b>
+              <div class="row mt-3">
+                <span class="col-3"
+                  >Giá thấp nhất:
+                  <i
+                    ><b>{{ formatCurrency(minPrice) }}</b></i
+                  ></span
+                >
+                <span class="col-2">
+                  {{ formatCurrency(minAndMaxPrice[0]) }}</span
+                >
+                <input
+                  type="range"
+                  class="form-range col-5"
+                  id="customRange1"
+                  style="display: inline-block"
+                  [min]="minAndMaxPrice[0]"
+                  [max]="changeableMaxPrice"
+                  [value]="minPrice"
+                  (input)="onMinPriceChange($event)"
+                  [title]="'Min price: ' + formatCurrency(minPrice)"
+                  step="1000"
+                />
+                <span class="col-2">{{
+                  formatCurrency(changeableMaxPrice)
+                }}</span>
+              </div>
+
+              <div class="row mt-3">
+                <span class="col-3"
+                  >Giá cao nhất:
+                  <i
+                    ><b>{{ formatCurrency(maxPrice) }}</b></i
+                  ></span
+                >
+                <span class="col-2">
+                  {{ formatCurrency(changeableMinPrice) }}</span
+                >
+                <input
+                  type="range"
+                  class="form-range col-5"
+                  id="customRange1"
+                  style="display: inline-block"
+                  [min]="changeableMinPrice"
+                  [max]="minAndMaxPrice[1]"
+                  [value]="maxPrice"
+                  (input)="onMaxPriceChange($event)"
+                  [title]="'Max price: ' + formatCurrency(maxPrice)"
+                  step="1000"
+                />
+                <span class="col-2">{{
+                  formatCurrency(minAndMaxPrice[1])
+                }}</span>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+        <div class="row mb-3 mx-5">
+          <b class="form-label">Lọc theo thuộc tính</b>
+          <div class="col-3">
+            <label class="form-label">Màu sắc</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'colorId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let ms of mauSacs" [value]="ms.id">
+                {{ ms?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-3">
+            <label class="form-label">Kích cỡ</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'sizeId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let kc of kichCos" [value]="kc.id">
+                {{ kc?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- <div class="col-3">
+            <label class="form-label">Kiểu dáng</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'formId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let kd of kieuDangs" [value]="kd.id">
+                {{ kd?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-3">
+            <label class="form-label">Thiết kế</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'designId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let tk of thietKes" [value]="tk.id">
+                {{ tk?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-3">
+            <label class="form-label">Kiểu tay áo</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'sleeveId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let ta of tayAos" [value]="ta.id">
+                {{ ta?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-3">
+            <label class="form-label">Kiểu cổ áo</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'collarId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let ca of coAos" [value]="ca.id">
+                {{ ca?.ten }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-3">
+            <label class="form-label">Chất liệu</label>
+            <select
+              class="form-select"
+              (change)="onSelectField($event, 'materialId')"
+            >
+              <option value="0" selected>Tất cả</option>
+              <option *ngFor="let cl of chatLieus" [value]="cl.id">
+                {{ cl?.ten }}
+              </option>
+            </select>
+          </div> -->
+        </div>
+      </div>
+      <h5 class="m-3">{{ sanPham?.ten }}</h5>
+
+      <div class="card-body" *ngIf="pagedResponse?.data.length > 0">
+        <button
+          class="btn btn-primary rounded my-3"
+          data-bs-toggle="modal"
+          data-bs-target="#updateCommonPropertyModal"
+        >
+          <i class="fa-regular fa-pen-to-square me-2"></i>Cập nhật thuộc tính
+          chung
+        </button>
+
+        <ul class="fs-5">
+          <li>
+            Kiểu dáng:
+            <span class="fw-bolder">{{
+              pagedResponse.data[0].kieuDang.ten
+            }}</span>
+          </li>
+          <li>
+            Kiểu thiết kế:
+            <span class="fw-bolder">
+              {{ pagedResponse.data[0].thietKe.ten }}
+            </span>
+          </li>
+          <li>
+            Cổ áo:
+            <span class="fw-bolder">
+              {{ pagedResponse.data[0].coAo.ten }}
+            </span>
+          </li>
+          <li>
+            Tay áo:
+            <span class="fw-bolder">
+              {{ pagedResponse.data[0].tayAo.ten }}
+            </span>
+          </li>
+          <li>
+            Chất liệu:
+            <span class="fw-bolder">{{
+              pagedResponse.data[0].chatLieu.ten
+            }}</span>
+          </li>
+        </ul>
+
+        <button
+          class="btn btn-primary rounded my-3"
+          *ngIf="isUpdateBtnHidden()"
+          (click)="quickUpdate(pagedResponse?.pageSize)"
+          data-bs-toggle="modal"
+          data-bs-target="#updateModal"
+        >
+          <i class="fa-regular fa-pen-to-square me-2"></i>Cập nhật nhanh
+        </button>
+
+        <table class="table">
+          <thead class="thead-default">
+            <tr>
+              <th>
+                <input
+                  id="ckBoxAll"
+                  type="checkbox"
+                  (click)="selectAllRows()"
+                />
+              </th>
+              <th>STT</th>
+              <th>Ảnh</th>
+              <th width="10%">Màu Sắc</th>
+              <th width="5%">Kích Cỡ</th>
+              <th>Giá Nhập</th>
+              <th>Giá Bán</th>
+              <th>Số Lượng</th>
+              <th>Trạng Thái</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              [id]="'row' + i"
+              [ngClass]="
+                checkSelectedRow('ckBoxForUpdate' + i) ? 'table-active' : ''
+              "
+              *ngFor="let s of pagedResponse?.data; let i = index"
+            >
+              <input [id]="'id' + i" type="hidden" [value]="s.id" />
+              <td>
+                <input
+                  [id]="'ckBoxForUpdate' + i"
+                  class="ckBoxForUpdate"
+                  type="checkbox"
+                  (change)="onCheckboxChange(i)"
+                />
+              </td>
+              <th scope="row">
+                {{
+                  i +
+                    1 +
+                    (pagedResponse.pageNumber - 1) * pagedResponse.pageSize
+                }}
+              </th>
+              <td>
+                <div
+                  id="carouselExampleSlidesOnly"
+                  class="carousel slide pointer"
+                  data-bs-ride="carousel"
+                  style="width: 60px"
+                  data-bs-interval="3000"
+                  (click)="openModalChinhSuaAnh(s.id, s.mauSac.id)"
+                  title="Chỉnh sửa ảnh"
+                >
+                  <div class="carousel-inner">
+                    <div
+                      class="carousel-item"
+                      [class]="i === 1 ? 'active' : ''"
+                      *ngFor="let img of s.hinhAnhs; let i = index"
+                    >
+                      <img
+                        [src]="img.imageUrl"
+                        class="d-block w-100 rounded"
+                        style="width: 150px; height: 100px; object-fit: cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div>{{ s.mauSac.ten }}</div>
+                <img
+                  class="rounded"
+                  [src]="s.mauSac.image.imageUrl"
+                  style="width: 60px"
+                />
+              </td>
+              <td>{{ s.kichCo.ten.split(" ")[0] }}</td>
+
+              <!-- giá nhập -->
+              <td>
+                <span *ngIf="!checkSelectedRow('ckBoxForUpdate' + i)">{{
+                  formatCurrency(s.giaNhap)
+                }}</span>
+
+                <div class="row" *ngIf="checkSelectedRow('ckBoxForUpdate' + i)">
+                  <input
+                    [id]="'giaNhap' + i"
+                    class="col rounded"
+                    type="text"
+                    size="15"
+                    [value]="s.giaNhap"
+                    (input)="formatNumber($event, 'giaNhap' + i)"
+                  />
+                  <span class="col">đ</span>
+                </div>
+              </td>
+
+              <!-- giá bán -->
+              <td>
+                <ng-template #noDiscount>
+                  <span *ngIf="!checkSelectedRow('ckBoxForUpdate' + i)">{{
+                    formatCurrency(s.giaBan)
+                  }}</span>
+                </ng-template>
+
+                <div class="row" *ngIf="checkSelectedRow('ckBoxForUpdate' + i)">
+                  <input
+                    [id]="'giaBan' + i"
+                    class="col rounded"
+                    type="text"
+                    size="15"
+                    [value]="s.giaBan"
+                    (input)="formatNumber($event, 'giaBan' + i)"
+                  />
+                  <span class="col">đ</span>
+                </div>
+
+                <ng-container *ngIf="isDiscounted(s.id); else noDiscount">
+                  <span
+                    ><del>
+                      {{ formatCurrency(s.giaBan) }}
+                    </del>
+                  </span>
+                  <br />
+                  <span
+                    nz-typography
+                    nzType="danger"
+                    *ngIf="!checkSelectedRow('ckBoxForUpdate' + i)"
+                    ><strong>
+                      {{ formatCurrency(returnNewPrice(s.id, s.giaBan)) }}
+                    </strong>
+                  </span>
+                </ng-container>
+              </td>
+
+              <!-- số lượng -->
+              <td>
+                <span *ngIf="!checkSelectedRow('ckBoxForUpdate' + i)">{{
+                  s.soLuongTon
+                }}</span
+                ><input
+                  [id]="'soLuong' + i"
+                  class="rounded"
+                  *ngIf="checkSelectedRow('ckBoxForUpdate' + i)"
+                  type="text"
+                  size="5"
+                  [value]="s.soLuongTon"
+                  (input)="formatNumber($event, 'soLuong' + i)"
+                />
+              </td>
+
+              <td>
+                <span
+                  [ngClass]="
+                    s.trangThai
+                      ? 'badge rounded-pill text-bg-success'
+                      : 'badge rounded-pill text-bg-danger'
+                  "
+                  >{{ s.trangThai ? "Đang bán" : "Ngừng bán" }}</span
+                >
+              </td>
+              <td>
+                <button
+                  class="btn btn-outline-warning btn-rounded me-2"
+                  title="Cập nhật"
+                  data-bs-toggle="modal"
+                  data-bs-target="#spctUpdateForm"
+                  (click)="selectUpdateSPCT(s.id)"
+                >
+                  <i
+                    class="fa-solid fa-pen-to-square"
+                    style="color: #ffd43b"
+                  ></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- footer: pagination -->
+      <div class="card-footer" *ngIf="pagedResponse?.data.length > 0">
+        <div class="col col-md-12 d-flex justify-content-between">
+          <div class="col-md-3">
+            <label class="my-1 mr-2" for="inlineFormCustomSelectPref"
+              >Số lượng:
+            </label>
+            <select
+              class="custom-select my-1 mr-sm-2 col-md-5"
+              id="inlineFormCustomSelectPref"
+              (change)="changePageSize($event)"
+            >
+              >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+            </select>
+          </div>
+          <div class="">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <li
+                  class="page-item"
+                  [ngClass]="pagedResponse?.pageNumber == 1 ? 'disabled' : ''"
+                >
+                  <a
+                    class="page-link pointer rounded"
+                    (click)="goToPage(pagedResponse?.pageNumber - 1)"
+                    >Previous</a
+                  >
+                </li>
+                <li
+                  class="page-item"
+                  *ngFor="let page of pagedResponse?.pageNumberArr"
+                >
+                  <a
+                    class="page-link pointer rounded"
+                    [ngClass]="
+                      pagedResponse?.pageNumber == page ? 'active' : ''
+                    "
+                    (click)="goToPage(page)"
+                    >{{ page }}</a
+                  >
+                </li>
+                <li
+                  class="page-item"
+                  [ngClass]="
+                    pagedResponse?.pageNumber == pagedResponse?.totalPages
+                      ? 'disabled'
+                      : ''
+                  "
+                >
+                  <a
+                    class="page-link pointer rounded"
+                    (click)="goToPage(pagedResponse?.pageNumber + 1)"
+                    >Next</a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!--  -->
+      <div class="text-center mt-3" *ngIf="pagedResponse?.data.length == 0">
+        <h3>Không có dữ liệu!</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal: update spct -->
+<div
+  class="modal fade"
+  id="spctUpdateForm"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Cập nhật sản phẩm chi tiết
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <i class="text-danger"
+          >* Cập nhật 1 sản phẩm chi tiết có thể thay đổi đến các sản phẩm chi
+          tiết khác</i
+        >
+        <form class="row" [formGroup]="updateForm">
+          <!-- Màu sắc -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Màu sắc:</label>
+            <select class="form-select" formControlName="mauSacId">
+              <option *ngFor="let ms of mauSacs" [value]="ms.id">
+                {{ ms.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Kích cỡ -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Kích cỡ:</label>
+            <select class="form-select" formControlName="kichCoId">
+              <option *ngFor="let kc of kichCos" [value]="kc.id">
+                {{ kc.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Số lượng -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Số lượng:</label>
+            <input
+              id="soLuongInput"
+              class="form-control rounded"
+              formControlName="soLuong"
+              (input)="formatNumber($event, 'soLuongInput')"
+            />
+          </div>
+
+          <!-- Giá nhập -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Giá nhập:</label>
+            <input
+              id="giaNhapInput"
+              class="form-control rounded"
+              formControlName="giaNhap"
+              (input)="formatNumber($event, 'giaNhapInput')"
+            />
+          </div>
+
+          <!-- Giá bán -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Giá bán:</label>
+            <input
+              id="giaBanInput"
+              class="form-control rounded"
+              formControlName="giaBan"
+              (input)="formatNumber($event, 'giaBanInput')"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          id="closeUpdateBtn"
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+          (click)="initUpdateForm()"
+        >
+          Hủy
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary rounded"
+          (click)="updateSpct()"
+        >
+          Cập Nhật
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal: update common property -->
+<div
+  class="modal fade"
+  id="updateCommonPropertyModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Cập nhật sản phẩm chi tiết
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <i class="text-danger">* Cập nhật thuộc tính của tất cả biến thể</i>
+        <form class="row" [formGroup]="updateCommonPropertiesForm">
+          <!-- Kiểu dáng -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Kiểu dáng:</label>
+            <select class="form-select" formControlName="kieuDangId">
+              <option *ngFor="let kd of kieuDangs" [value]="kd.id">
+                {{ kd.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Thiết kế -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Thiết kế:</label>
+            <select class="form-select" formControlName="thietKeId">
+              <option *ngFor="let tk of thietKes" [value]="tk.id">
+                {{ tk.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Tay áo -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Tay áo:</label>
+            <select class="form-select" formControlName="tayAoId">
+              <option *ngFor="let ta of tayAos" [value]="ta.id">
+                {{ ta.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Cổ áo -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Cổ áo:</label>
+            <select class="form-select" formControlName="coAoId">
+              <option *ngFor="let ca of coAos" [value]="ca.id">
+                {{ ca.ten }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Chất liệu -->
+          <div class="col-6 mt-3">
+            <label class="form-label font-weight-bold">Chất liệu:</label>
+            <select class="form-select" formControlName="chatLieuId">
+              <option *ngFor="let cl of chatLieus" [value]="cl.id">
+                {{ cl.ten }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          id="closeUpdateCommonPropertiesModalBtn"
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+        >
+          Hủy
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary rounded"
+          (click)="updateCommonProperties()"
+        >
+          Cập Nhật
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- button: trigger modal update image -->
+<button
+  id="triggerUpdateAnhModal"
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#updateAnhModal"
+  style="display: none"
+>
+  Launch demo modal
+</button>
+
+<!-- modal: update image -->
+<div
+  class="modal fade"
+  id="updateAnhModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Cập nhật ảnh</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <!-- các ảnh đã chọn -->
+        <h6>Ảnh đã chọn:</h6>
+        <div class="text-center">
+          <i *ngIf="selectedImgFileList.length === 0">Chưa có ảnh nảo</i>
+        </div>
+        <div
+          style="display: inline-block"
+          *ngFor="let f of selectedImgFileList; let i = index"
+        >
+          <div>
+            <img class="thumbnail me-5" [id]="'selectedImg2' + i" src="" />
+          </div>
+        </div>
+
+        <!-- Danh sách ảnh tải lên -->
+        <hr />
+        <h6>Danh sách ảnh tải lên:</h6>
+        <div class="text-center">
+          <p><i *ngIf="uploadImgFileList.length === 0">Chưa có ảnh nảo</i></p>
+
+          <button
+            class="mt-3 pointer btn btn-primary rounded"
+            (click)="openInputUpdateImg()"
+          >
+            Tải ảnh lên
+          </button>
+          <input
+            type="file"
+            id="inputUpdateImg"
+            multiple
+            hidden
+            (change)="changeFileInputAndShowThumbnail($event)"
+          />
+        </div>
+        <div
+          class="image-container"
+          *ngFor="let file of uploadImgFileList; let i = index"
+        >
+          <img class="exist-img" [id]="'uploadImg' + i" />
+          <input
+            [id]="'chkBoxUploadImg' + i"
+            [checked]="isUploadImgChecked(file.name)"
+            type="checkbox"
+            class="checkbox"
+            (change)="toggleUploadImage(i, file, $event)"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          id="closeUpdateImgBtn"
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+        >
+          Hủy
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary rounded"
+          (click)="updateAnhSpct()"
+        >
+          Cập Nhật
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-overlay *ngIf="isLoadding" [text]="overlayText"></app-overlay>

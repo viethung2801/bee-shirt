@@ -1,0 +1,86 @@
+<div class="row gutters">
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <form>
+                    <div class="mb-3">
+                        <label for="">Mã Phiếu</label> <br>
+                        <input type="text" class="form-control" placeholder="Mã phiếu giảm giá"
+                            [value]="phieuDetails?.maPhieuGiamGia" [disabled]="true">
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="">Tên Phiếu</label> <br>
+                        <input type="email" class="form-control" placeholder="Tên phiếu giảm giá"
+                            [value]="phieuDetails?.tenPhieuGiamGia" [disabled]="true">
+
+                    </div>
+
+                    <div class=" mb-3">
+                        <label for="">Kiểu Phiếu</label> <br>
+                        
+                        <input type="text" class="form-control" [value]="phieuDetails?.kieu ==0?'%':'Tiền Mặt'" [disabled]="true">
+                    </div>
+
+                    <div class=" mb-3">
+                        <label for="">Loại Phiếu</label> <br>
+                        <input type="text" class="form-control" [value]="phieuDetails?.loai ==1?'Công Khai':'Cá Nhân'" [disabled]="true">
+                    </div>
+
+
+                    <div class="mb-3 row">
+
+                        <div class="col-md-6">
+                            <label for="">Giá Trị</label> <br>
+                            <input type="number" class="form-control" placeholder="Giá trị"
+                                [value]="phieuDetails?.giaTri" [disabled]="true">
+
+                        </div>
+                        <div class="col-md-6">
+                            <label for="">Giá Trị Tối Đa</label> <br>
+                            <input type="number" class="form-control" placeholder="Giá trị tối đa"
+                                [value]="phieuDetails?.giaTriMax" [disabled]="true">
+                        </div>
+                    </div>
+
+
+                    <div class="mb-3 row">
+                        <div class="col-md-6">
+                            <label for="">Số Lượng</label> <br>
+                            <input type="number" class="form-control" placeholder="Số lượng"
+                                [value]="phieuDetails?.soLuong" [disabled]="true">
+
+                        </div>
+                        <div class="col-md-6">
+                            <label for="">Điều Kiện Giảm</label> <br>
+                            <input type="number" class="form-control" placeholder="Điều kiện"
+                                [value]="phieuDetails?.dieuKienGiam" [disabled]="true">
+
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Từ ngày</label>
+                        <input type="datetime-local" class="form-control" [value]="phieuDetails?.thoiGianBatDau"
+                            [disabled]="true">
+
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Đến ngày</label>
+                        <input type="datetime-local" class="form-control" [value]="phieuDetails?.thoiGianKetThuc"
+                            [disabled]="true">
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>

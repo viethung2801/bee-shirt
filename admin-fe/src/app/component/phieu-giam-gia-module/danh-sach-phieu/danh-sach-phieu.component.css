@@ -1,0 +1,65 @@
+.contain{
+  background-color: white;
+  border-radius: 3px;
+}
+
+.congkhai{
+  border: 1px solid #269b43;
+  background-color: #82ea9c;
+  border-radius: 50px;
+  color: #0a8021;
+}
+
+.private{
+  border: 1px solid #bb2c2c;
+  background-color: rgba(255, 98, 98, 0.59);
+  border-radius: 50px;
+  color: #ad0909;
+}
+
+.table td, .table th {
+  text-align: center;
+}
+
+.btnFilter{
+  display: flex;
+  align-items: flex-end;
+}
+
+.card{
+  border-radius: 8px ;
+ 
+  margin: 10px;
+}
+
+.card-header,
+.card-footer{
+  background:none;
+}
+
+
+
+thead tr th {
+  background-color: #574afb ; /* Màu nền của header */
+  color: white;
+  text-transform: uppercase;
+}
+
+.btn-create{
+  background-color: #574afb;
+  color: white;
+}
+
+.btnReload{
+  background-color: #574afb;
+  color: white ;
+}
+
+.page-link.active{
+  background-color: #574afb;
+  color: white !important;
+}
+
+.pagination li a{
+  color: #574afb;
+}

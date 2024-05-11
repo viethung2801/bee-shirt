@@ -1,0 +1,94 @@
+<div class="row">
+  <div class="col-md-4">
+    <label class="form-label"
+      ><b class="fw-bold text-danger">*</b>Tỉnh / Thành phố:</label
+    >
+    <div class="form-group">
+      <div class="input-group">
+        <select
+          class="custom-select"
+          [(ngModel)]="diaChiVaPhiVanChuyen.tinhId"
+          (change)="getAllHuyenByTinh()"
+          (click)="setIsFillData(false)"
+        >
+          <option value="-1">
+            {{ "Chọn tỉnh thành" }}
+          </option>
+          <option *ngFor="let t of tinhs" [value]="t.ProvinceID">
+            {{ t.ProvinceName }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label"
+      ><b class="fw-bold text-danger">*</b>Quận / Huyện:</label
+    >
+    <div class="form-group">
+      <div class="input-group">
+        <select
+          class="custom-select"
+          [(ngModel)]="diaChiVaPhiVanChuyen.huyenId"
+          (change)="getAllXaByHuyen()"
+          (click)="setIsFillData(false)"
+        >
+          <option value="-1">Chọn quận huyện</option>
+          <option
+            *ngFor="let h of huyens; trackBy: trackByHuyen; index as i"
+            value="{{ h.DistrictID }}"
+          >
+            {{ h.DistrictName }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label"
+      ><b class="fw-bold text-danger">*</b>Xã / Phường / Thị trấn:</label
+    >
+    <div class="form-group">
+      <div class="input-group">
+        <select
+          class="custom-select"
+          (change)="onFinishChooseDiaChi()"
+          [(ngModel)]="diaChiVaPhiVanChuyen.xaCode"
+          (click)="setIsFillData(false)"
+        >
+          <option value="">Chọn xã phường</option>
+          <option
+            *ngFor="let x of xas; index as i; trackBy: trackByXa"
+            value="{{ x.WardCode }}"
+          >
+            {{ x.WardName }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <label class="form-label"
+      ><b class="fw-bold text-danger">*</b>Địa chỉ cụ thể:</label
+    >
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="diaChiVaPhiVanChuyen.cuThe"
+      (change)="getPhiVanChuyen()"
+    />
+  </div>
+
+  <hr />
+  <!-- Shipping info -->
+  <div class="ml-5">
+    <p>
+      Thời gian giao hàng dự kiến:
+      {{ diaChiVaPhiVanChuyen.duKien | date : "dd-MM-yyyy" }}
+    </p>
+    <p>
+      Phí vận chuyển: {{ diaChiVaPhiVanChuyen.phiVanChuyen | currency : "đ " }}
+    </p>
+  </div>
+</div>
+<app-overlay [text]="overlayText" *ngIf="isLoadding"></app-overlay>

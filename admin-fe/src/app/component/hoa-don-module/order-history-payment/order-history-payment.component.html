@@ -1,0 +1,237 @@
+<!-- Order payment -->
+<div class="row gutters">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex">
+        <h4>Lịch sử thanh toán</h4>
+        <div class="ml-auto d-flex">
+          <button
+            type="button"
+            class="btn btn-primary btn-rounded"
+            data-toggle="modal"
+            data-target="#createLichSuThanhToan"
+            [disabled]="
+              hoaDon.loaiHoaDon == 'TAI_QUAY' ||
+              hoaDon.trangThai == 'HOAN_THANH' ||
+              hoaDon.trangThai == 'HUY' ||
+              hoaDon.trangThai == 'TRA_HANG' ||
+              hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+              hoaDon.trangThai == 'DA_HOAN_TIEN' ||
+              isGiaoHangAndChuyenKhoan(hoaDon)
+            "
+          >
+            <i class="fa-solid fa-plus"></i>
+            Thanh toán
+          </button>
+          <div *ngIf="hoaDon.trangThai == 'CHO_HOAN_TIEN'">
+            <app-hoan-tien
+              [title]="'Hoàn tiền'"
+              [tienThanhToan]="
+                hoaDon.tongTien - hoaDon.tienGiam + hoaDon.phiVanChuyen
+              "
+              [hoaDonId]="hoaDon.id"
+            ></app-hoan-tien>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr role="row">
+                <th>STT</th>
+                <th>Mã GD</th>
+                <th>Số tiền</th>
+                <th>Trạng thái</th>
+                <th>Thời gian</th>
+                <th>Phương thức thanh toán</th>
+                <th>Người tạo</th>
+                <th>Ghi chú</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let lstt of hoaDon.thanhToans; index as i">
+                <td>{{ i + 1 }}</td>
+                <td>{{ lstt.maGiaoDich }}</td>
+                <td>
+                  {{ lstt.soTien | currency : "đ " : "symbol" : "1.0-0" }}
+                </td>
+                <td>
+                  {{ lstt.trangThai == true ? "Thành công" : "Thất bại" }}
+                </td>
+                <td>{{ lstt.createdAt }}</td>
+                <td>
+                  <app-phuong-thuc-thanh-toan
+                    [phuongThucThanhToan]="lstt.hinhThucThanhToan.hinhThuc"
+                  ></app-phuong-thuc-thanh-toan>
+                </td>
+                <td>{{ lstt.createdBy }}</td>
+                <td>{{ lstt.moTa }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-outline-light btn-rounded"
+                    [disabled]="
+                      hoaDon.trangThai == 'HOAN_THANH' ||
+                      hoaDon.trangThai == 'HUY' ||
+                      hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+                      hoaDon.trangThai == 'DA_HOAN_TIEN' ||
+                      isGiaoHangAndChuyenKhoan(hoaDon)
+                    "
+                    *ngIf="!(hoaDon.trangThai == 'TRA_HANG')"
+                    (click)="deleteThanhToan(lstt)"
+                  >
+                    <i class="fa-solid fa-trash text-danger"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Create Lịch sử thanh toán-->
+  <div
+    class="modal fade"
+    id="createLichSuThanhToan"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    style="display: none"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Cập nhật thông tin</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <!-- Main modal -->
+        <div class="modal-body">
+          <!-- Form -->
+          <form class="row" [formGroup]="thanhToanForm">
+            <!-- Tổng tiền -->
+            <div class="mb-3">
+              <label class="form-label">Tổng tiền:</label>
+              <input
+                type="text"
+                class="form-control"
+                value="{{
+                  hoaDon.tongTien + hoaDon.phiVanChuyen - hoaDon.tienGiam
+                    | currency : 'đ ' : 'symbol' : '1.0-0'
+                }}"
+                disabled
+              />
+            </div>
+            <!-- Tiền thừa -->
+            <div class="mb-3">
+              <label class="form-label">Đã thanh toán:</label>
+              <input
+                type="text"
+                class="form-control"
+                value="{{
+                  getTienKhachThanhToan() | currency : 'đ ' : 'symbol' : '1.0-0'
+                }}"
+                disabled
+              />
+            </div>
+            <!-- Tiền khách đưa -->
+            <div class="mb-3">
+              <label class="form-label">Số tiền:</label>
+              <!-- <input
+                type="number"
+                class="form-control"
+                formControlName="tienKhachDua"
+              /> -->
+              <app-input-number
+                [value]="thanhToanForm.get('tienKhachDua').value"
+                (valueChange)="patchTienKhachDua($event)"
+              >
+              </app-input-number>
+              <small
+                class="form-text text-danger"
+                *ngIf="thanhToanForm.controls['tienKhachDua'].invalid"
+                >Tiền khách đưa không hợp lệ</small
+              >
+            </div>
+
+            <!-- Hình thức thanh toán -->
+            <div class="mb-3">
+              <label class="form-label">Hình thức: </label>
+              <label class="form-check form-check-inline ml-4">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="hinhThucThanhToan"
+                  value="TIEN_MAT"
+                  formControlName="hinhThucThanhToan"
+                />
+                <label class="form-check-label">Tiền mặt</label>
+              </label>
+              <label class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="hinhThucThanhToan"
+                  value="CHUYEN_KHOAN"
+                  formControlName="hinhThucThanhToan"
+                />
+                <label class="form-check-label">Chuyển khoản</label>
+              </label>
+            </div>
+            <!-- Mã giao dịch -->
+            <div class="mb-3">
+              <label class="form-label">Mã giao dịch:</label>
+              <br />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="maGiaoDich"
+              />
+              <small
+                class="form-text text-danger"
+                *ngIf="thanhToanForm.controls['maGiaoDich'].invalid"
+                >Mã giao dịch không được trống</small
+              >
+            </div>
+            <!-- Mô tả -->
+            <div class="mb-3">
+              <label class="form-label">Ghi chú:</label>
+              <br />
+              <input type="text" class="form-control" formControlName="moTa" />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary btn-rounded"
+            data-dismiss="modal"
+            [disabled]="thanhToanForm.invalid"
+            (click)="newThanhToan()"
+          >
+            Xác nhận
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger btn-rounded"
+            data-dismiss="modal"
+          >
+            Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END order payment -->

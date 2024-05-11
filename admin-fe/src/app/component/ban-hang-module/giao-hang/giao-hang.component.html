@@ -1,0 +1,67 @@
+<!-- Danh sách địa chỉ -->
+<div class="row d-flex mt-2 mb-3">
+  <div
+    class="col-6 fw-bold"
+    *ngFor="let dc of khachHang?.diaChis; index as i"
+    (click)="changeDiaChi(dc)"
+  >
+    <label class="form-check">
+      <input
+        type="radio"
+        value="TIEN_MAT"
+        class="form-check-input"
+        name="khachHangDiaChi"
+      />
+      <div>Địa chỉ {{ i + 1 }}</div>
+      <div class="text-muted">
+        {{ dc.duong + "," + dc.xa + "," + dc.huyen + "," + dc.tinh }}
+      </div>
+    </label>
+  </div>
+</div>
+<!-- Component -->
+<div class="row mb-3">
+  <div class="col-6">
+    <span class="sidebar-money-part-left"
+      ><b class="fw-bold text-danger">*</b>Tên người nhận:
+    </span>
+    <span class="sidebar-money-part-right"
+      ><input
+        type="text"
+        class="form-control"
+        [(ngModel)]="tenNguoiNhan"
+        (ngModelChange)="onTenNguoiNhanChange()"
+    /></span>
+  </div>
+  <div class="col-6">
+    <span class="sidebar-money-part-left"
+      ><b class="fw-bold text-danger">*</b>Số điện thoại:</span
+    >
+    <span class="sidebar-money-part-right"
+      ><input
+        type="text"
+        class="form-control"
+        [(ngModel)]="sdtNguoiNhan"
+        (ngModelChange)="onSdtNguoiNhanChange()"
+    /></span>
+  </div>
+  <div class="col-12">
+    <span class="sidebar-money-part-left">Email:</span>
+    <span class="sidebar-money-part-right"
+      ><input
+        type="text"
+        class="form-control"
+        [(ngModel)]="emailNguoiNhan"
+        (ngModelChange)="onEmailNguoiNhanChange()"
+    /></span>
+  </div>
+</div>
+<div class="mt-5">
+  <app-get-dia-chi-va-phi-van-chuyen
+    [diaChiVaPhiVanChuyen]="diaChiVaPhiVanChuyen"
+    (diaChiVaPhiVanChuyenChange)="updateDiaChi($event)"
+    (changePhiVanChuyen)="updatePhiVanChuyen($event)"
+  >
+    ></app-get-dia-chi-va-phi-van-chuyen
+  >
+</div>

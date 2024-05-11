@@ -1,0 +1,320 @@
+<!-- Order tracking -->
+<div class="row gutters">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex">
+        <h4>Theo dõi đơn hàng</h4>
+      </div>
+
+      <div class="card-body">
+        <div
+          class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x"
+        >
+          <div
+            class="step completed"
+            *ngFor="let lshd of getDanhSachTrangThai()"
+          >
+            <!-- Icon -->
+            <div class="step-icon-wrap">
+              <div class="step-icon" [ngSwitch]="lshd.trangThai">
+                <i *ngSwitchCase="'TAO_DON'" class="fa-solid fa-cart-plus"></i>
+                <i
+                  *ngSwitchCase="'CHO_XAC_NHAN'"
+                  class="fa-solid fa-exclamation"
+                ></i>
+                <i *ngSwitchCase="'DA_XAC_NHAN'" class="fa-solid fa-check"></i>
+                <i *ngSwitchCase="'CHO_GIAO'" class="fa-solid fa-truck"></i>
+                <i
+                  *ngSwitchCase="'DANG_GIAO'"
+                  class="fa-solid fa-truck-fast"
+                ></i>
+                <i
+                  *ngSwitchCase="'HOAN_THANH'"
+                  class="fa-solid fa-credit-card"
+                ></i>
+                <i *ngSwitchCase="'HUY'" class="fa-solid fa-ban"></i>
+                <i
+                  *ngSwitchCase="'TRA_HANG'"
+                  class="fa-solid fa-rotate-left"
+                ></i>
+
+                <i
+                  *ngSwitchCase="'CHO_HOAN_TIEN'"
+                  class="fa-solid fa-comment-dollar"
+                ></i>
+                <i
+                  *ngSwitchCase="'DA_HOAN_TIEN'"
+                  class="fa-solid fa-money-bill-transfer"
+                ></i>
+                <i *ngSwitchDefault class="fa-solid fa-shop"></i>
+              </div>
+            </div>
+            <!-- title -->
+            <h4 class="step-title">{{ lshd.tieuDe }}</h4>
+            <p class="mt-1">
+              {{ lshd.createdAt }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="p-2 d-flex">
+        <button
+          type="button"
+          class="btn btn-primary mr-5 btn-rounded"
+          data-toggle="modal"
+          data-target="#chageStatusModal"
+          [disabled]="
+            hoaDon.trangThai == 'HOAN_THANH' ||
+            hoaDon.trangThai == 'HUY' ||
+            hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+            hoaDon.trangThai == 'DA_HOAN_TIEN' ||
+            hoaDon.trangThai == 'TRA_HANG'
+          "
+          (click)="setIsNext(true)"
+        >
+          {{ titleButton }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning mr-5 btn-rounded"
+          data-toggle="modal"
+          data-target="#chageStatusModal"
+          *ngIf="
+            !(
+              hoaDon.loaiHoaDon == 'TAI_QUAY' ||
+              hoaDon.trangThai == 'CHO_XAC_NHAN' ||
+              hoaDon.trangThai == 'TAO_DON' ||
+              hoaDon.trangThai == 'HUY'
+            )
+          "
+          [disabled]="
+            hoaDon.trangThai == 'TRA_HANG' ||
+            hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+            hoaDon.trangThai == 'DA_HOAN_TIEN'
+          "
+          (click)="setIsNext(false)"
+        >
+          Quay lại
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger mr-5 btn-rounded"
+          data-toggle="modal"
+          data-target="#cancelOrderModal"
+          [disabled]="
+            hoaDon.trangThai == 'DANG_GIAO' ||
+            hoaDon.trangThai == 'HUY' ||
+            hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+            hoaDon.trangThai == 'DA_HOAN_TIEN' ||
+            hoaDon.trangThai == 'TRA_HANG'
+          "
+          *ngIf="hoaDon.loaiHoaDon == 'GIAO_HANG'"
+        >
+          Hủy
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-success ml-auto btn-rounded"
+          data-toggle="modal"
+          data-target="#orderHistoryModal"
+        >
+          Lịch sử
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Lịch sử -->
+  <div
+    class="modal fade"
+    id="orderHistoryModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    style="display: none"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Lịch sử hóa đơn</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">STT</th>
+                  <th scope="col">Trạng thái</th>
+                  <th scope="col">Thời gian</th>
+                  <th scope="col">Ghi chú</th>
+                  <th scope="col">Người tạo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  class=""
+                  *ngFor="
+                    let lshd of getLichSuHoaDonsOrderByCreatedDate();
+                    index as i
+                  "
+                >
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ lshd.tieuDe }}</td>
+                  <td>
+                    {{ lshd.createdAt }}
+                  </td>
+                  <td>{{ lshd.moTa }}</td>
+                  <td>{{ lshd.createdBy }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary btn-rounded"
+            data-dismiss="modal"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Change Status -->
+  <div
+    class="modal fade"
+    id="chageStatusModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    style="display: none"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Xác nhận thay đổi trạng thái
+          </h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="changeStatusForm">
+            <div class="mb-3">
+              <label class="form-label">Mô tả: </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="moTa"
+                placeholder="Nhập mô tả của lịch sử thay đổi"
+              />
+              <small
+                *ngIf="changeStatusForm.controls.moTa.invalid"
+                class="form-text text-danger"
+                >Tối thiểu 10 kí tự</small
+              >
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger btn-rounded"
+            data-dismiss="modal"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-rounded"
+            data-dismiss="modal"
+            [disabled]="changeStatusForm.invalid"
+            (click)="changeOrderStatus()"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Model cancel order -->
+  <div
+    class="modal fade"
+    id="cancelOrderModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    style="display: none"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Hủy hóa đơn</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="changeStatusForm">
+            <div class="mb-3">
+              <label class="form-label">Mô tả: </label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="moTa"
+                placeholder="Nhập mô tả của lịch sử thay đổi"
+              />
+              <small
+                *ngIf="changeStatusForm.controls.moTa.invalid"
+                class="form-text text-danger"
+                >Tối thiểu 10 kí tự</small
+              >
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-danger btn-rounded"
+            data-dismiss="modal"
+          >
+            Hủy
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-rounded"
+            data-dismiss="modal"
+            [disabled]="changeStatusForm.invalid"
+            (click)="cancelOrder()"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-overlay [text]="overlayText" *ngIf="isLoadding"></app-overlay>

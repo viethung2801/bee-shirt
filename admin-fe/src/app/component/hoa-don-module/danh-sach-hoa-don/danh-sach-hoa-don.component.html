@@ -1,0 +1,405 @@
+<!-- Content heading -->
+<app-main-heading
+  [icon]="'fa-solid fa-receipt'"
+  [mainHeading]="''"
+  [title]="'Danh sách hóa đơn'"
+></app-main-heading>
+
+<!-- Content filter-->
+<br />
+<div class="row gutters">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h4 class="float-md-left">Bộ lọc</h4>
+      </div>
+      <div class="card-body pt-4">
+        <!-- Filter start -->
+        <div class="row gutters d-flex align-items-center">
+          <div class="col-md-5 pe-4">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <label class="me-3"> Tìm kiếm: </label>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Nhập mã hóa đơn, số điện thoại, tên, email ..."
+                [(ngModel)]="search"
+              />
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="input-group d-flex align-items-center">
+              <div class="input-group-prepend">
+                <label class="me-3"> Loại Hóa Đơn: </label>
+              </div>
+              <select
+                class="custom-select"
+                id="inputGroupSelect01"
+                [(ngModel)]="loaiHoaDon"
+              >
+                <option value="">Tất cả</option>
+                <option value="GIAO_HANG">Giao Hàng</option>
+                <option value="TAI_QUAY">Tại quầy</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="input-group d-flex align-items-center">
+              <div class="input-group-prepend">
+                <label class="me-3"> Ngày Tạo: </label>
+              </div>
+              <input type="date" class="form-control" [(ngModel)]="ngayTao" />
+            </div>
+          </div>
+
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-create m-2 btn-rounded"
+              (click)="timKiem()"
+            >
+              Tìm kiếm
+            </button>
+            <button
+              type="button"
+              class="btn btn-success m-2 btn-rounded"
+              (click)="clearFilter()"
+            >
+              Làm mới
+            </button>
+          </div>
+        </div>
+        <!-- Filter End -->
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+<div class="row gutters">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="right-actions d-flex">
+          <button
+            routerLink="/ban-hang"
+            type="button"
+            class="btn btn-create ml-auto btn-rounded"
+          >
+            <i class="fa-solid fa-plus"></i>
+            Tạo hóa đơn
+          </button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Tab header -->
+        <ul class="nav nav-tabs fw-bold" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a
+              class="nav-link active"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('')"
+              >Tất cả</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('CHO_XAC_NHAN')"
+              >Chờ xác nhận
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.choXacNhanQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.choXacNhanQuantity
+              }}</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('DA_XAC_NHAN')"
+              >Đã xác nhận
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.daXacNhanQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.daXacNhanQuantity
+              }}</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('CHO_GIAO')"
+              >Chờ giao
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.choGiaoQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.choGiaoQuantity
+              }}</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('DANG_GIAO')"
+              >Đang giao
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.dangGiaoQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.dangGiaoQuantity
+              }}</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('HOAN_THANH')"
+              >Hoàn thành
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.hoanThanhQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.hoanThanhQuantity
+              }}</span></a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link position-relative"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('TRA_HANG')"
+            >
+              Trả hàng
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.traHangQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.traHangQuantity
+              }}</span>
+              <!-- Số thông báo -->
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link position-relative"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('HUY')"
+            >
+              Hủy
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.huyQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.huyQuantity
+              }}</span>
+              <!-- Số thông báo -->
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link position-relative"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('CHO_HOAN_TIEN')"
+            >
+              Chờ hoàn tiền
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.huyQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.choHoanTienQuantity
+              }}</span>
+              <!-- Số thông báo -->
+            </a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link position-relative"
+              id="home-tab"
+              data-toggle="tab"
+              href="#home"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+              (click)="changeStatus('DA_HOAN_TIEN')"
+            >
+              Đã hoàn tiền
+              <span class="badge-number text-danger">{{
+                soLuongDonHang.huyQuantity > 99
+                  ? "99+"
+                  : soLuongDonHang.daHoanTienQuantity
+              }}</span>
+              <!-- Số thông báo -->
+            </a>
+          </li>
+        </ul>
+        <!--End Tab header -->
+        <!-- Tab Table Data -->
+        <div>
+          <div class="row">
+            <div class="col-sm-12">
+              <table
+                class="table table-bordered table-hover"
+                role="grid"
+                aria-describedby="rowSelection_info"
+              >
+                <thead>
+                  <tr role="row">
+                    <th>STT</th>
+                    <th>Mã HD</th>
+                    <th>Mã NV</th>
+                    <th>Khách Hàng</th>
+                    <th>Số điện thoại</th>
+                    <th>Ngày tạo</th>
+                    <th>Tổng tiền</th>
+                    <th>Loại HD</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let hd of hoaDons?.data; index as i">
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ hd.ma }}</td>
+                    <td>{{ hd.nhanVien == null ? "" : hd.nhanVien.id }}</td>
+                    <td>
+                      {{
+                        hd.khachHang == null ? "Khách lẻ" : hd.khachHang.hoTen
+                      }}
+                    </td>
+                    <td>
+                      {{ hd.khachHang == null ? "" : hd.khachHang.sdt }}
+                    </td>
+                    <td>
+                      {{ hd.createdAt }}
+                    </td>
+                    <td>
+                      {{
+                        hd.tongTien + hd.phiVanChuyen - hd.tienGiam
+                          | currency : "đ " : "symbol" : "1.0-0"
+                      }}
+                    </td>
+                    <td>
+                      <app-loai-hoa-don
+                        [loaiHoaDon]="hd.loaiHoaDon"
+                      ></app-loai-hoa-don>
+                    </td>
+                    <td>
+                      <app-trang-thai-hoa-don
+                        [trangThai]="hd.trangThai"
+                      ></app-trang-thai-hoa-don>
+                    </td>
+                    <td class="d-flex">
+                      <a
+                        class="btn btn-outline-warning btn-rounded mr-2"
+                        routerLink="/hoa-don/chi-tiet-hoa-don/{{ hd.id }}"
+                      >
+                        <i class="fa-solid fa-pen-to-square"></i>
+                      </a>
+
+                      <div *ngIf="hd.trangThai == 'CHO_HOAN_TIEN'">
+                        <app-hoan-tien
+                          [tienThanhToan]="
+                            hd.tongTien - hd.tienGiam + hd.phiVanChuyen
+                          "
+                          [hoaDonId]="hd?.id"
+                          (hoaDonChange)="updateTrangThai($event, i)"
+                        ></app-hoan-tien>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <div class="dataTables_length" id="fixedHeader_length">
+                Xem
+                <select
+                  name="fixedHeader_length"
+                  aria-controls="fixedHeader"
+                  class=""
+                  [(ngModel)]="pageSize"
+                  (change)="getHoaDons()"
+                >
+                  <option value="5">5</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-md-6 d-flex justify-content-end">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                  <li
+                    class="page-item"
+                    *ngFor="let page of hoaDons?.pageNumberArr"
+                    [ngClass]="page - 1 == hoaDons?.pageNumber ? 'active' : ''"
+                  >
+                    <a
+                      class="page-link pointer"
+                      (click)="changePage(page - 1)"
+                      >{{ page }}</a
+                    >
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+        <!-- End Table Data -->
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<span [ngSwitch]="trangThai">
+  <button *ngSwitchCase="'TAO_DON'" class="btn btn-primary btn-rounded">
+    Tạo đơn
+  </button>
+  <button *ngSwitchCase="'HOAN_THANH'" class="btn btn-success btn-rounded">
+    Hoàn thành
+  </button>
+  <button *ngSwitchCase="'HUY'" class="btn btn-danger btn-rounded">Hủy</button>
+  <button *ngSwitchCase="'DANG_GIAO'" class="btn btn-warning btn-rounded">
+    Đang giao
+  </button>
+  <button *ngSwitchCase="'CHO_XAC_NHAN'" class="btn btn-info btn-rounded">
+    Chờ xác nhận
+  </button>
+  <button *ngSwitchCase="'CHO_GIAO'" class="btn btn-light btn-rounded">
+    Chờ giao
+  </button>
+  <button *ngSwitchCase="'DA_XAC_NHAN'" class="btn btn-dark btn-rounded">
+    Đã xác nhận
+  </button>
+  <button *ngSwitchCase="'TRA_HANG'" class="btn btn-pink btn-rounded">
+    Trả hàng
+  </button>
+  <button *ngSwitchCase="'CHO_HOAN_TIEN'" class="btn btn-purple btn-rounded">
+    Chờ hoàn tiền
+  </button>
+  <button *ngSwitchCase="'DA_HOAN_TIEN'" class="btn btn-olive btn-rounded">
+    Đã hoàn tiền
+  </button>
+  <button *ngSwitchDefault>ERROR</button>
+</span>

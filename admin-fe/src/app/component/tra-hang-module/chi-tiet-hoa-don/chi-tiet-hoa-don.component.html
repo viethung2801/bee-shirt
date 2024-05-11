@@ -1,0 +1,496 @@
+<div class="card">
+  <div class="card-header">
+    <strong
+      >Chi Tiết Hoá Đơn
+      <strong style="color: #32ba7c">{{ hoaDon?.ma }} </strong>
+    </strong>
+  </div>
+  <div class="card-body">
+    <ng-container *ngIf="this.hoaDon != null; else noData">
+      <div class="row">
+        <div class="col col-md-12">
+          <div class="card">
+            <div class="card-header">Thông tin đơn hàng</div>
+            <div class="card-body">
+              <nz-descriptions nzBordered>
+                <nz-descriptions-item nzTitle="Mã Hoá Đơn">{{
+                  this.hoaDon?.ma
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Số Lượng Loại Sản Phẩm">{{
+                  this.hoaDon?.hoaDonChiTiets?.length
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Tên Khách Hàng">{{
+                  this.hoaDon?.tenNguoiNhan
+                    ? this.hoaDon.tenNguoiNhan
+                    : this.hoaDon.khachHang?.hoTen
+                    ? this.hoaDon.khachHang?.hoTen
+                    : "-"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Số Điện Thoại">{{
+                  this.hoaDon?.sdtNguoiNhan
+                    ? this.hoaDon?.sdtNguoiNhan
+                    : this.hoaDon?.khachHang
+                    ? this.hoaDon?.khachHang.sdt
+                    : "-"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Email">{{
+                  this.hoaDon?.emailNguoiNhan
+                    ? this.hoaDon?.emailNguoiNhan
+                    : this.hoaDon.khachHang?.email
+                    ? this.hoaDon.khachHang?.email
+                    : "-"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Địa Chỉ">{{
+                  this.hoaDon?.diaChiNguoiNhan
+                    ? this.hoaDon?.diaChiNguoiNhan
+                    : "-"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Ngày Tạo">{{
+                  this.hoaDon?.createdAt
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Trạng Thái">
+                  <nz-badge
+                    nzStatus="processing"
+                    [nzText]="this.hoaDon?.trangThai ? 'Hoàn Thành' : ''"
+                  ></nz-badge>
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Mã Nhân Viên">
+                  {{ this.hoaDon?.nhanVien?.id }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Tổng Đơn Hàng">{{
+                  this.hoaDon?.tongTien | currency : "VND"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Giảm Giá">{{
+                  this.hoaDon?.tienGiam | currency : "VND"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Phí Giao Hàng">{{
+                  this.hoaDon?.phiVanChuyen | currency : "VND"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Tổng Thanh Toán">{{
+                  this.hoaDon?.tongTien -
+                    this.hoaDon?.tienGiam +
+                    this.hoaDon?.phiVanChuyen | currency : "VND"
+                }}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="Ghi chú">
+                  {{ this.hoaDon?.ghiChu ? this.hoaDon?.ghiChu : "-" }}
+                </nz-descriptions-item>
+              </nz-descriptions>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-12">
+          <ng-container>
+            <div class="card">
+              <div class="card-header d-flex justify-content-between">
+                Danh Sách Sản Phẩm Đã Mua
+                <span class="text-danger font-italic"
+                  >*Các sản phẩm được mua từ đợt giảm giá sẽ không được trả
+                  hàng</span
+                >
+              </div>
+              <div class="card-body">
+                <nz-table
+                  [nzPageSizeOptions]="[5, 10, 20, 30]"
+                  [nzPageSize]="5"
+                  #rowSelectionTable
+                  nzShowSizeChanger
+                  [nzData]="listOfData"
+                  (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        [nzSelections]="listOfSelection"
+                        [(nzChecked)]="checked"
+                        [nzIndeterminate]="indeterminate"
+                        (nzCheckedChange)="onAllChecked($event)"
+                      ></th>
+                      <th>Sản Phẩm</th>
+                      <th>Số Lượng</th>
+                      <th>Giá Tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of rowSelectionTable.data">
+                      <td
+                        [nzChecked]="setOfCheckedId.has(data.id)"
+                        [nzDisabled]="
+                          isInListIdDotGiamGiaSanPham(data.sanPhamChiTiet.id)
+                        "
+                        (nzCheckedChange)="
+                          showConfirmOfQuantity(data.id, data.soLuong, $event)
+                        "
+                      ></td>
+                      <td>
+                        <img
+                          class="product-image"
+                          [src]="data.sanPhamChiTiet.hinhAnhs.at(0).imageUrl"
+                        />
+                        {{ data.sanPhamChiTiet.sanPham.ten }} - [{{
+                          data.sanPhamChiTiet.mauSac.ten
+                        }}
+                        | {{ data.sanPhamChiTiet.kichCo.ten }}]
+                      </td>
+                      <td>{{ data.soLuong }}</td>
+                      <td>{{ data.giaBan | currency : "VND" }}</td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-md-8">
+          <ng-container>
+            <div class="card">
+              <div class="card-header">Danh Sách Sản Phẩm Trả</div>
+              <div class="card-body">
+                <nz-table
+                  #headerTable
+                  [nzData]="this.listReturnItems"
+                  [nzPageSize]="5"
+                >
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th class="large-column">Sản Phẩm</th>
+                      <th>Số Lượng Hoàn Trả</th>
+                      <th>Giá Tiền Mua</th>
+                      <th>Tổng Tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let data of headerTable.data; let index = index"
+                    >
+                      <td>{{ index + 1 }}</td>
+                      <td [width]="300">
+                        <img
+                          class="product-image"
+                          [src]="data.sanPhamChiTiet.hinhAnhs.at(0).imageUrl"
+                        />
+                        {{ data.sanPhamChiTiet.sanPham.ten }} - [{{
+                          data.sanPhamChiTiet.mauSac.ten
+                        }}
+                        | {{ data.sanPhamChiTiet.kichCo.ten }}]
+                      </td>
+                      <td class="button-container">
+                        <button class="btn p-0">
+                          <span
+                            class="icon minus-icon"
+                            nz-icon
+                            [nzType]="'minus-circle'"
+                            [nzTheme]="'twotone'"
+                            [nzTwotoneColor]="'#f6e559'"
+                            (click)="minusQuantity(data.id)"
+                          ></span>
+                        </button>
+                        <span class="data">{{ data.soLuong }}</span>
+                        <button class="btn p-0">
+                          <span
+                            class="icon plus-icon"
+                            nz-icon
+                            [nzType]="'plus-circle'"
+                            [nzTheme]="'twotone'"
+                            [nzTwotoneColor]="'#95d240'"
+                            (click)="plusQuantity(data.id)"
+                          ></span>
+                        </button>
+                      </td>
+                      <td>{{ data.giaBan | currency : "VND" }}</td>
+                      <td style="font-weight: bold; color: #ff0000">
+                        {{ data.soLuong * data.giaBan | currency : "VND" }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="col col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <nz-divider
+                style="color: #32ba7c; font-weight: bold"
+                nzText="Thông Tin Hoàn Trả"
+              ></nz-divider>
+            </div>
+            <div class="card-body">
+              <nz-list nzBordered>
+                <nz-list-item>
+                  <span nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="user" style="margin-right: 5px"></i>
+                      <strong> Tên người nhận: </strong>
+                    </kbd>
+                  </span>
+                  <strong>{{
+                    this.hoaDon?.tenNguoiNhan
+                      ? this.hoaDon.tenNguoiNhan
+                      : this.hoaDon.khachHang?.hoTen
+                      ? this.hoaDon.khachHang?.hoTen
+                      : "-"
+                  }}</strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="phone" style="margin-right: 5px"></i>
+                      <strong> Số điện thoại: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      max-width: 200px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
+                    >{{
+                      this.hoaDon?.sdtNguoiNhan
+                        ? this.hoaDon?.sdtNguoiNhan
+                        : this.hoaDon?.khachHang
+                        ? this.hoaDon?.khachHang.sdt
+                        : "-"
+                    }}</strong
+                  >
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="home" style="margin-right: 5px"></i>
+                      <strong> Địa chỉ: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      max-width: 200px;
+                      overflow: auto;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{
+                      this.hoaDon.diaChiNguoiNhan
+                        ? this.hoaDon.diaChiNguoiNhan
+                        : " - "
+                    }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i
+                        nz-icon
+                        nzType="rollback"
+                        style="margin-right: 5px"
+                      ></i>
+                      <strong> Số lượng sản phẩm trả: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      max-width: 200px;
+                      overflow: auto;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{ calculateSum() }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="euro" style="margin-right: 5px"></i>
+                      <strong> Tổng tiền hoá đơn ban đầu: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      max-width: 200px;
+                      overflow: auto;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{ this.oldAmount | currency : "VND" }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="euro" style="margin-right: 5px"></i>
+                      <strong> Tổng tiền hoá đơn hiện tại: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      color: #f6e559;
+                      max-width: 200px;
+                      overflow: auto;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{ this.newAmount | currency : "VND" }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i
+                        nz-icon
+                        nzType="money-collect"
+                        style="margin-right: 5px"
+                      ></i>
+                      <strong>
+                        Phiếu giảm giá:
+                        <strong style="color: #32ba7c">{{
+                          this.bestVoucher?.maPhieuGiamGia
+                        }}</strong>
+                      </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      color: #f26100;
+                      font-weight: bold;
+                      max-width: 200px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{ discountMoney | currency : "VND" }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item nzTooltipPlacement="top" nz-button nz-tooltip>
+                  <span nz nz-typography>
+                    <kbd
+                      style="color: #080808; display: flex; align-items: center"
+                    >
+                      <i nz-icon nzType="dollar" style="margin-right: 5px"></i>
+                      <strong> Tổng tiền hoàn trả: </strong>
+                    </kbd>
+                  </span>
+                  <strong
+                    style="
+                      color: #32ba7c;
+                      font-weight: bold;
+                      max-width: 200px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
+                  >
+                    {{ amountOfMoneyReturn | currency : "VND" }}
+                  </strong>
+                </nz-list-item>
+                <nz-list-item>
+                  <div></div>
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nzBlock
+                    [disabled]="this.amountOfMoneyReturn === 0"
+                    (click)="showModal()"
+                  >
+                    Trả Hàng
+                  </button>
+                  <div></div>
+                </nz-list-item>
+              </nz-list>
+            </div>
+            <div class="card-footer">
+              <span nz-typography
+                ><strong>Hóa đơn không có phiếu giảm giá:</strong></span
+              >
+              <div>Tổng tiền trả = giá sản phẩm * số lượng</div>
+              <span nz-typography
+                ><strong>Hóa đơn có phiếu giảm giá:</strong></span
+              >
+              <br />
+              <span nz-typography
+                ><u>Không đủ điều kiện áp dụng phiếu giảm giá</u></span
+              >
+              <div>
+                Tổng tiền trả = Tổng đơn hàng mua thực tế - tiền đơn được giảm
+              </div>
+              <br />
+              <span nz-typography
+                ><strong
+                  >Không đủ điều kiện áp dụng phiếu giảm giá cũ nhưng được áp
+                  dụng phiếu giảm giá mới</strong
+                ></span
+              >
+              <br />
+              <span nz-typography
+                ><u>Được áp dụng phiếu giảm giá mới loại %</u></span
+              >
+              <div>
+                Tổng tiền trả = Tổng đơn hàng trả mua thực tế - tiền đơn được
+                giảm + tiền phiếu giảm giá mới
+              </div>
+              <br />
+              <span nz-typography
+                ><u>Được áp dụng phiếu giảm giá mới loại tiền mặt</u></span
+              >
+              <div>
+                Tổng tiền trả = Tổng đơn hàng trả mua thực tế - tiền đơn được
+                giảm + tiền phiếu giảm giá mới
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #noData>
+  <nz-empty></nz-empty>
+</ng-template>
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Lý Do Trả Hàng"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+>
+  <ng-container *nzModalContent>
+    <nz-radio-group [(ngModel)]="radioValue">
+      <label nz-radio nzValue="A">Sản phẩm không đúng như mô tả</label>
+      <label nz-radio nzValue="B"
+        >Sản phẩm không đúng kích cỡ hoặc màu sắc</label
+      >
+      <label nz-radio nzValue="C"
+        >Sản phẩm bị lỗi (rách, mất cúc áo, cúc tay, mốc, v.v)</label
+      >
+      <label nz-radio nzValue="M">
+        Khác...
+        <input
+          type="text"
+          [(ngModel)]="text"
+          nz-input
+          *ngIf="radioValue === 'M'"
+        />
+      </label>
+    </nz-radio-group>
+  </ng-container>
+</nz-modal>

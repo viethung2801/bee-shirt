@@ -1,0 +1,9 @@
+<span [ngSwitch]="loaiHoaDon">
+  <button *ngSwitchCase="'GIAO_HANG'" class="btn btn-primary btn-rounded">
+    Giao hàng
+  </button>
+  <button *ngSwitchCase="'TAI_QUAY'" class="btn btn-success btn-rounded">
+    Tại quầy
+  </button>
+  <button *ngSwitchDefault>ERROR</button>
+</span>

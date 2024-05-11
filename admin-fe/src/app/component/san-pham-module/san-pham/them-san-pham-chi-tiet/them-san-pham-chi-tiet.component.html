@@ -1,0 +1,1023 @@
+<div class="row gutters pt-2">
+  <div class="col-sm-12">
+    <!-- selector của 5 thuộc tính -->
+    <div class="card">
+      <div class="card-header">
+        <h3 class="mb-2">Thêm Sản Phẩm Chi Tiết</h3>
+      </div>
+      <div class="card-body">
+        <h4 class="text-center mt-2">Thông tin sản phẩm</h4>
+        <form class="form border p-2 rounded mb-5" [formGroup]="propertyIdForm">
+          <input type="hidden" formControlName="sanPhamId" />
+          <i class="text-danger" *ngIf="existSpct != null"
+            >* Sản phẩm này đã có một số sản phẩm chi tiết</i
+          >
+          <!-- tên sản phẩm -->
+          <div class="my-3">
+            <label class="form-label font-weight-bold"
+              ><a class="link-label">Sản phẩm:</a></label
+            >
+            <input
+              type="email"
+              class="form-control"
+              placeholder="name@example.com"
+              [value]="sanPham?.ten + ' - ' + sanPham?.ma"
+              disabled
+            />
+          </div>
+
+          <div class="row">
+            <!-- kiểu dáng -->
+            <div class="col-6 mb-3">
+              <label class="form-label font-weight-bold"
+                ><a
+                  class="link-label"
+                  [routerLink]="'/kieu-dang/ds-kieu-dang'"
+                  title="Đi đến danh sách kiểu dáng"
+                  target="_blank"
+                  >Kiểu dáng:</a
+                ></label
+              >
+              <div class="row" *ngIf="existSpct == null">
+                <input
+                  id="kieuDangId"
+                  class="form-control rounded col-8 ms-3 me-2"
+                  list="kieuDangList"
+                  type="text"
+                  (input)="selectProperty($event, activeForms, 'kieuDangId')"
+                  [ngClass]="validation.kieuDangId ? 'is-invalid' : ''"
+                />
+                <datalist id="kieuDangList">
+                  <option
+                    *ngFor="let kd of activeForms"
+                    [value]="kd.ten"
+                  ></option>
+                </datalist>
+                <button
+                  class="btn btn-primary rounded col-2"
+                  (click)="
+                    changeNameAndServiceForProperty(
+                      'dáng áo',
+                      'kieuDangService'
+                    )
+                  "
+                  data-bs-toggle="modal"
+                  data-bs-target="#addNhanhForm"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- error -->
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.kieuDangId &&
+                  checkPropertyInputHasCharacters('kieuDangId')
+                "
+              >
+                <i>Kiểu dáng này không tồn tại! Vui lòng chọn lại.</i>
+              </div>
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.kieuDangId &&
+                  !checkPropertyInputHasCharacters('kieuDangId')
+                "
+              >
+                <i>Kiểu dáng không được bỏ trống.</i>
+              </div>
+
+              <div *ngIf="existSpct != null">
+                <input
+                  class="form-control rounded"
+                  [value]="existSpct.kieuDang.ten"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- kiểu thiết kế -->
+            <div class="col-6 mb-3">
+              <label class="form-label font-weight-bold"
+                ><a
+                  class="link-label"
+                  [routerLink]="'/kieu-thiet-ke/ds-kieu-thiet-ke'"
+                  title="Đi đến danh sách kiểu thiết kế"
+                  target="_blank"
+                  >Kiểu thiết kế:</a
+                ></label
+              >
+              <div class="row" *ngIf="existSpct == null">
+                <input
+                  id="thietKeId"
+                  class="form-control rounded col-8 ms-3 me-2"
+                  list="thietKeList"
+                  type="text"
+                  (input)="selectProperty($event, activeDesigns, 'thietKeId')"
+                  [ngClass]="validation.thietKeId ? 'is-invalid' : ''"
+                />
+                <datalist id="thietKeList">
+                  <option
+                    *ngFor="let tk of activeDesigns"
+                    [value]="tk.ten"
+                  ></option>
+                </datalist>
+                <button
+                  class="btn btn-primary rounded col-2"
+                  (click)="
+                    changeNameAndServiceForProperty(
+                      'kiểu thiết kế',
+                      'kieuThietKeService'
+                    )
+                  "
+                  data-bs-toggle="modal"
+                  data-bs-target="#addNhanhForm"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- error -->
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.thietKeId &&
+                  checkPropertyInputHasCharacters('thietKeId')
+                "
+              >
+                <i>Kiểu thiết kế này không tồn tại! Vui lòng chọn lại.</i>
+              </div>
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.thietKeId &&
+                  !checkPropertyInputHasCharacters('thietKeId')
+                "
+              >
+                <i>Kiểu thiết kế không được bỏ trống.</i>
+              </div>
+
+              <div *ngIf="existSpct != null">
+                <input
+                  class="form-control rounded"
+                  [value]="existSpct.thietKe.ten"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- tay áo -->
+            <div class="col-6 mb-3">
+              <label class="form-label font-weight-bold"
+                ><a
+                  class="link-label"
+                  [routerLink]="'/kieu-tay-ao/ds-kieu-tay-ao'"
+                  title="Đi đến danh sách kiểu tay áo"
+                  target="_blank"
+                  >Kiểu tay áo:</a
+                ></label
+              >
+              <div class="row" *ngIf="existSpct == null">
+                <input
+                  id="tayAoId"
+                  class="form-control rounded col-8 ms-3 me-2"
+                  list="tayAoList"
+                  type="text"
+                  (input)="selectProperty($event, activeSleeves, 'tayAoId')"
+                  [ngClass]="validation.tayAoId ? 'is-invalid' : ''"
+                />
+                <datalist id="tayAoList">
+                  <option
+                    *ngFor="let ta of activeSleeves"
+                    [value]="ta.ten"
+                  ></option>
+                </datalist>
+                <button
+                  class="btn btn-primary rounded col-2"
+                  (click)="
+                    changeNameAndServiceForProperty(
+                      'kiểu tay áo',
+                      'kieuTayAoService'
+                    )
+                  "
+                  data-bs-toggle="modal"
+                  data-bs-target="#addNhanhForm"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- error -->
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.tayAoId &&
+                  checkPropertyInputHasCharacters('tayAoId')
+                "
+              >
+                <i>Kiểu tay áo này không tồn tại! Vui lòng chọn lại.</i>
+              </div>
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.tayAoId &&
+                  !checkPropertyInputHasCharacters('tayAoId')
+                "
+              >
+                <i>Kiểu tay áo không được bỏ trống.</i>
+              </div>
+
+              <div *ngIf="existSpct != null">
+                <input
+                  class="form-control rounded"
+                  [value]="existSpct.tayAo.ten"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- cổ áo -->
+            <div class="col-6 mb-3">
+              <label class="form-label font-weight-bold"
+                ><a
+                  class="link-label"
+                  [routerLink]="'/kieu-co-ao/ds-kieu-co-ao'"
+                  title="Đi đến danh sách kiểu cổ áo"
+                  target="_blank"
+                  >Kiểu cổ áo:</a
+                ></label
+              >
+              <div class="row" *ngIf="existSpct == null">
+                <input
+                  id="coAoId"
+                  class="form-control rounded col-8 ms-3 me-2"
+                  list="coAoList"
+                  type="text"
+                  (input)="selectProperty($event, activeCollars, 'coAoId')"
+                  [ngClass]="validation.coAoId ? 'is-invalid' : ''"
+                />
+                <datalist id="coAoList">
+                  <option
+                    *ngFor="let ca of activeCollars"
+                    [value]="ca.ten"
+                  ></option>
+                </datalist>
+                <button
+                  class="btn btn-primary rounded col-2"
+                  (click)="
+                    changeNameAndServiceForProperty(
+                      'kiểu cổ áo',
+                      'kieuCoAoService'
+                    )
+                  "
+                  data-bs-toggle="modal"
+                  data-bs-target="#addNhanhForm"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- error -->
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.coAoId && checkPropertyInputHasCharacters('coAoId')
+                "
+              >
+                <i>Kiểu cổ áo này không tồn tại! Vui lòng chọn lại.</i>
+              </div>
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.coAoId &&
+                  !checkPropertyInputHasCharacters('coAoId')
+                "
+              >
+                <i>Kiểu cổ áo không được bỏ trống.</i>
+              </div>
+
+              <div *ngIf="existSpct != null">
+                <input
+                  class="form-control rounded"
+                  [value]="existSpct.coAo.ten"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- chất liệu -->
+            <div class="col-12 mb-3">
+              <label class="form-label font-weight-bold"
+                ><a
+                  class="link-label"
+                  [routerLink]="'/chat-lieu/ds-chat-lieu'"
+                  title="Đi đến danh sách chất liệu"
+                  target="_blank"
+                  >Chất liệu:</a
+                ></label
+              >
+              <div class="row" *ngIf="existSpct == null">
+                <input
+                  id="chatLieuId"
+                  class="form-control rounded col-10 ms-3 me-2"
+                  list="chatLieuList"
+                  type="text"
+                  (input)="
+                    selectProperty($event, activeMaterials, 'chatLieuId')
+                  "
+                  [ngClass]="validation.chatLieuId ? 'is-invalid' : ''"
+                />
+                <datalist id="chatLieuList">
+                  <option
+                    *ngFor="let cl of activeMaterials"
+                    [value]="cl.ten"
+                  ></option>
+                </datalist>
+                <button
+                  class="btn btn-primary rounded col-1"
+                  (click)="
+                    changeNameAndServiceForProperty(
+                      'chất liệu',
+                      'chatLieuService'
+                    )
+                  "
+                  data-bs-toggle="modal"
+                  data-bs-target="#addNhanhForm"
+                >
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- error -->
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.chatLieuId &&
+                  checkPropertyInputHasCharacters('chatLieuId')
+                "
+              >
+                <i>Kiểu chất liệu này không tồn tại! Vui lòng chọn lại.</i>
+              </div>
+              <div
+                class="ms-2 mt-1 text-danger"
+                *ngIf="
+                  validation.chatLieuId &&
+                  !checkPropertyInputHasCharacters('chatLieuId')
+                "
+              >
+                <i>Kiểu chất liệu không được bỏ trống.</i>
+              </div>
+
+              <div *ngIf="existSpct != null">
+                <input
+                  class="form-control rounded"
+                  [value]="existSpct.chatLieu.ten"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- selector của 2 thuộc tính -->
+    <div class="card">
+      <div class="card-header">
+        <h4 class="text-center mt-2">Chọn Màu sắc & Kích cỡ</h4>
+        <form class="form p-2 mb-5">
+          <!-- Màu sắc -->
+          <div class="row">
+            <label class="me-3 font-weight-bold col-2">Màu sắc:</label>
+            <div class="col-8">
+              <div
+                style="display: inline-block"
+                *ngFor="let sc of selectedColorList"
+              >
+                <div class="img-container me-5 mb-2">
+                  <img
+                    class="selected-color-img"
+                    [src]="sc.image.imageUrl"
+                    [title]="sc.ten"
+                  />
+                  <div class="close-icon" (click)="removeSelectedColor(sc.id)">
+                    &#10006;
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button btn-primary"
+              class="btn btn-primary ms-3 rounded col-1"
+              data-bs-toggle="modal"
+              data-bs-target="#mauSacBoard"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+
+          <!-- Kích cỡ -->
+          <div class="mt-3 row">
+            <label class="me-3 font-weight-bold col-2">Kích cỡ:</label>
+            <div class="col-8">
+              <div
+                style="display: inline-block"
+                *ngFor="let ss of selectedSizeList"
+              >
+                <div class="frame-container me-5">
+                  <div class="content">{{ ss.ten.split(" ")[0] }}</div>
+                  <div class="close-icon" (click)="removeSelectedSize(ss.id)">
+                    &#10006;
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button btn-primary"
+              class="btn btn-primary ms-3 mb-3 rounded col-1"
+              data-bs-toggle="modal"
+              data-bs-target="#kichCoBoard"
+            >
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- bảng hiển thị các spct theo từng màu -->
+    <div *ngIf="selectedSizeList?.length > 0">
+      <div
+        class="card"
+        *ngFor="let sc of selectedColorList; let colorIndex = index"
+      >
+        <div class="card-header">
+          <!-- title -->
+          <div class="row my-3">
+            <h4 class="col-10">Danh sách sản phẩm màu {{ sc.ten }}</h4>
+            <div class="col-2">
+              <button
+                [id]="'chinhSuaBtn' + colorIndex"
+                class="btn btn-primary rounded"
+                *ngIf="toggleUpdateFieldBtn(sc.id)"
+                data-bs-toggle="modal"
+                data-bs-target="#updateModal"
+                (click)="assignChinhSuaBtnId(sc.id)"
+              >
+                <i class="fa-regular fa-pen-to-square me-2"></i>Chỉnh sửa
+              </button>
+            </div>
+          </div>
+
+          <!-- table of spct -->
+          <div class="row">
+            <!-- left: price, quantity -->
+            <div class="col-8">
+              <i
+                class="text-danger mb-3"
+                *ngIf="validation.priceQuantity[colorIndex]"
+                >Giá bán phải lớn hơn giá nhập, giá nhập & giá bán & số lượng
+                phải > 0</i
+              >
+              <table class="table" class="color-table">
+                <thead>
+                  <tr>
+                    <th width="5%">
+                      <input
+                        [id]="'ckBoxAll' + sc.id"
+                        [class]="'ckBoxColor' + sc.id"
+                        type="checkbox"
+                        (click)="selectAllRows1Color(sc.id)"
+                      />
+                    </th>
+                    <th width="30%">Sản phẩm</th>
+                    <th width="10%">Kích cỡ</th>
+                    <th width="15%">Giá nhập</th>
+                    <th width="15%">Giá bán</th>
+                    <th width="15%">Số lượng</th>
+                    <th width="5%">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let ss of selectedSizeList"
+                    [id]="'row' + sc.id + ss.id"
+                    [ngClass]="
+                      checkColorAndSize(sc.id, ss.id) ? 'table-danger' : ''
+                    "
+                    [title]="
+                      checkColorAndSize(sc.id, ss.id)
+                        ? 'SPCT này đã tồn tại. Vui lòng xóa!'
+                        : ''
+                    "
+                  >
+                    <input
+                      [id]="'mauSacId' + sc.id"
+                      [class]="'mauSacId' + sc.id"
+                      [value]="sc.id"
+                      type="hidden"
+                    />
+                    <input
+                      [id]="'kichCoId' + ss.id"
+                      [class]="'kichCoId' + sc.id"
+                      [value]="ss.id"
+                      type="hidden"
+                    />
+                    <td>
+                      <input
+                        [id]="'ckBoxColor' + sc.id + ss.id"
+                        [class]="'ckBoxColor' + sc.id"
+                        type="checkbox"
+                        (change)="toggleUpdateFieldBtn(sc.id)"
+                      />
+                    </td>
+                    <td>
+                      <span>{{ sanPham.ten }}</span>
+                    </td>
+                    <td>{{ ss.ten.split(" ")[0] }}</td>
+                    <td>
+                      <input
+                        class="rounded border border-secondary"
+                        [id]="'giaNhap' + sc.id + ss.id"
+                        [class]="'giaNhap' + sc.id"
+                        type="text"
+                        style="width: 100px"
+                        value="0"
+                        (input)="
+                          formatPriceQuantity($event, 'giaNhap' + sc.id + ss.id)
+                        "
+                        s
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="rounded border border-secondary"
+                        [id]="'giaBan' + sc.id + ss.id"
+                        [class]="'giaBan' + sc.id"
+                        type="text"
+                        style="width: 100px"
+                        value="0"
+                        (input)="
+                          formatPriceQuantity($event, 'giaBan' + sc.id + ss.id)
+                        "
+                      />
+                    </td>
+                    <td>
+                      <input
+                        class="rounded border border-secondary"
+                        [id]="'soLuong' + sc.id + ss.id"
+                        [class]="'soLuong' + sc.id"
+                        type="text"
+                        style="width: 100px"
+                        value="0"
+                        (input)="
+                          formatPriceQuantity($event, 'soLuong' + sc.id + ss.id)
+                        "
+                      />
+                    </td>
+                    <td>
+                      <i
+                        class="fa-solid fa-trash pointer"
+                        style="color: red"
+                        (click)="deleteRow('row' + sc.id + ss.id, sc.id, ss.id)"
+                      ></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- right: image -->
+            <div class="text-center col-4">
+              <i class="text-danger mb-3" *ngIf="validation.anh[colorIndex]"
+                >Vui lòng chọn ảnh cho sản phẩm!</i
+              >
+              <h5>Ảnh</h5>
+              <img
+                class="default-img mb-3 pointer"
+                title="Chọn ảnh"
+                src="assets/img/default-image.jpg"
+                (click)="openImgModal(sc.ten, sc.id, colorIndex)"
+              />
+              <button
+                id="triggerBtnImgModal"
+                type="button btn-primary"
+                class="btn btn-primary ms-3 mb-3"
+                data-bs-toggle="modal"
+                data-bs-target="#anhSpModal"
+                hidden
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <div>
+                <input
+                  [id]="'fileImage' + colorIndex"
+                  type="file"
+                  multiple
+                  hidden
+                  (change)="changeInputForUploadImg($event)"
+                />
+              </div>
+
+              <div class="container">
+                <div class="image-container-2">
+                  <img
+                    *ngFor="
+                      let f of selectedImgFileList[colorIndex];
+                      let sizeIndex = index
+                    "
+                    [id]="
+                      'selectedImgOutModal' + curWorkingImgIndex + sizeIndex
+                    "
+                    [class]="'selectedImgOutModal' + colorIndex + sizeIndex"
+                  />
+                  <img
+                    [ngClass]="isSelectAllImg[colorIndex] ? '' : 'hidden'"
+                    *ngFor="
+                      let i of existingImgList[colorIndex];
+                      let sizeIndex = index
+                    "
+                    [src]="i.imageUrl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mb-5">
+    <button
+      class="btn btn-success rounded"
+      (click)="add()"
+      [disabled]="
+        !(selectedColorList?.length > 0 && selectedSizeList?.length > 0)
+      "
+    >
+      Thêm
+    </button>
+  </div>
+</div>
+
+<!-- modal 1: ảnh -->
+<div
+  class="modal fade"
+  id="anhSpModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <h5>Ảnh '{{ selectedTenMauSac }}'</h5>
+        </div>
+        <!-- các ảnh đã chọn -->
+        <h6>Danh sách ảnh đã chọn:</h6>
+        <div class="text-center">
+          <i *ngIf="curSelectedImgFileList?.length === 0">Chưa có ảnh nảo</i>
+        </div>
+        <div
+          style="display: inline-block"
+          *ngFor="let f of curSelectedImgFileList; let i = index"
+        >
+          <div>
+            <img
+              [id]="'selectedImgInModal' + curWorkingImgIndex + i"
+              class="thumbnail me-5"
+              src=""
+            />
+          </div>
+        </div>
+
+        <div
+          style="display: inline-block"
+          *ngFor="let cei of curExistingImgList; let i = index"
+        >
+          <div>
+            <img
+              [ngClass]="isSelectAllImg[curWorkingImgIndex] ? '' : 'hidden'"
+              [id]="'selectedImgInModal2' + curWorkingImgIndex + i"
+              class="thumbnail me-5"
+              [src]="cei.imageUrl"
+            />
+          </div>
+        </div>
+
+        <!-- các ảnh đã chọn cùng màu -->
+        <hr />
+        <h6>Danh sách ảnh của màu '{{ selectedTenMauSac }}':</h6>
+        <div class="text-center">
+          <i *ngIf="curExistingImgList?.length === 0 || !curExistingImgList"
+            >Chưa có ảnh nào</i
+          >
+        </div>
+        <div
+          class="image-container"
+          *ngFor="let ei of curExistingImgList; let i = index"
+        >
+          <img
+            class="exist-img"
+            [id]="'existingImgInModal' + selectedIdMauSac + i"
+            [src]="ei.imageUrl"
+          />
+        </div>
+        <br />
+        <button
+          *ngIf="curExistingImgList?.length > 0"
+          class="btn btn-secondary rounded"
+          (click)="selectAllExistingImgs()"
+          [disabled]="isSelectAllImg[curWorkingImgIndex]"
+        >
+          Chọn toàn bộ ảnh đã có
+        </button>
+
+        <!-- Danh sách ảnh tải lên -->
+        <hr />
+        <h6>Danh sách ảnh tải lên:</h6>
+        <div class="text-center">
+          <i *ngIf="curUploadImgFileList?.length === 0">Chưa có ảnh nảo</i>
+        </div>
+        <div
+          class="image-container"
+          *ngFor="let file of curUploadImgFileList; let i = index"
+        >
+          <img
+            class="exist-img"
+            [id]="'uploadedImgInModal' + selectedIdMauSac + i"
+            src=""
+          />
+          <input
+            [id]="'chkBoxUploadImg' + i"
+            [checked]="isUploadedImgChecked(file.name)"
+            type="checkbox"
+            class="checkbox"
+            (change)="toggleUploadedImage(i, file, $event)"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          class="btn btn-primary col-2 rounded"
+          (click)="openFileInput(curWorkingImgIndex)"
+          [disabled]="curExistingImgList?.length > 0"
+        >
+          Tải ảnh lên
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+        >
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 2: màu sắc -->
+<div
+  class="modal fade"
+  id="mauSacBoard"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Chọn màu sắc</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6 pointer" *ngFor="let ms of activeColors">
+            <img
+              class="color-img rounded"
+              [src]="ms.image.imageUrl"
+              (click)="selectColor(ms)"
+            />
+            <div>
+              <p
+                class="rounded p-1 mt-1"
+                [ngClass]="checkSelectedColor(ms) ? 'selected-color-size' : ''"
+                style="display: inline-flex"
+              >
+                {{ ms.ten + " - " + ms.ma }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+        >
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 3: kích cỡ -->
+<div
+  class="modal fade"
+  id="kichCoBoard"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Chọn kích cỡ</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-2 pointer" *ngFor="let kc of activeSizes">
+            <div
+              [ngClass]="checkSelectedSize(kc) ? 'selected-color-size' : ''"
+              class="border border-secondary p-3 rounded"
+              (click)="selectSize(kc)"
+            >
+              {{ kc.ten.split(" ")[0] }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary rounded"
+          data-bs-dismiss="modal"
+        >
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 4: chỉnh sửa giá nhập, giá bán, số lượng hàng loạt -->
+<div
+  class="modal fade"
+  id="updateModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Chỉnh sửa</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Giá nhập</label>
+          <input
+            id="giaNhapInput"
+            class="form-control"
+            type="text"
+            value="0"
+            (input)="formatPriceQuantity($event, 'giaNhapInput')"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Giá bán</label>
+          <input
+            id="giaBanInput"
+            class="form-control"
+            type="text"
+            value="0"
+            (input)="formatPriceQuantity($event, 'giaBanInput')"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Số lượng</label>
+          <input
+            id="soLuongInput"
+            class="form-control"
+            type="text"
+            value="0"
+            (input)="formatPriceQuantity($event, 'soLuongInput')"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          id="chinhSuaNhanhBtn"
+          class="btn btn-secondary rounded"
+          type="button"
+          data-bs-dismiss="modal"
+        >
+          Đóng
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary rounded"
+          (click)="saveSoLuongForm()"
+        >
+          Lưu
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal 5: thêm nhanh thuộc tính -->
+<div
+  class="modal fade"
+  id="addNhanhForm"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">
+          Thêm mới nhanh '{{ curQuickAddProperty }}'
+        </h1>
+      </div>
+      <form [formGroup]="quickAddForm">
+        <div class="modal-body">
+          <div class="form-row">
+            <label>Tên {{ curQuickAddProperty }}:</label>
+            <input
+              type="text"
+              class="form-control rounded"
+              [ngClass]="
+                quickAddForm.get('ten').invalid &&
+                quickAddForm.get('ten').touched
+                  ? 'is-invalid'
+                  : ''
+              "
+              formControlName="ten"
+            />
+            <div
+              class="invalid-feedback"
+              *ngIf="quickAddForm.get('ten').hasError('customRequired')"
+            >
+              Tên không được bỏ trống
+            </div>
+            <div
+              class="invalid-feedback"
+              *ngIf="quickAddForm.get('ten').hasError('pattern')"
+            >
+              Tên không hợp lệ
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            id="closeAddNhanhBtn"
+            type="button"
+            class="btn btn-secondary rounded"
+            (click)="initQuickAddPropertyForm()"
+            data-bs-dismiss="modal"
+          >
+            Đóng
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary rounded"
+            [disabled]="quickAddForm.invalid"
+            (click)="addNhanhThuocTinh()"
+          >
+            Thêm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-overlay *ngIf="isLoadding" [text]="overlayText"></app-overlay>

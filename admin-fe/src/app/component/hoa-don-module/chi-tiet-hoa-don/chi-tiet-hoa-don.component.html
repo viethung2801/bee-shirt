@@ -1,0 +1,250 @@
+<!-- Content heading -->
+<app-main-heading
+  [icon]="'fa-solid fa-receipt'"
+  [mainHeading]="''"
+  [title]="'Chi tiết hóa đơn'"
+></app-main-heading>
+<br />
+<div class="d-flex">
+  <div class="ml-auto">
+    <button
+      type="button"
+      class="btn btn-primary btn-lg mr-3 border-1 btn-rounded"
+      (click)="inPhieuGiao()"
+      *ngIf="hoaDon.loaiHoaDon == 'GIAO_HANG'"
+    >
+      <i class="fa-solid fa-print"></i>
+      In Phiếu Giao
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary btn-lg mr-3 border-1 btn-rounded"
+      (click)="printHoaDonTraHang()"
+      *ngIf="hoaDon.trangThai == 'TRA_HANG'"
+    >
+      <i class="fa-solid fa-print"></i>
+      In Hoá Đơn Trả Hàng
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary btn-lg mr-1 border-1 btn-rounded"
+      (click)="printHoaDon()"
+    >
+      <i class="fa-solid fa-print"></i>
+      In Hoá Đơn
+    </button>
+  </div>
+</div>
+<br />
+<!-- Order trackking -->
+<app-order-tracking
+  [hoaDon]="hoaDon"
+  (hoaDonChange)="putHoaDon($event)"
+></app-order-tracking>
+
+<!-- Order history payment -->
+<app-order-history-payment
+  [hoaDon]="hoaDon"
+  (hoaDonChange)="putHoaDon($event)"
+></app-order-history-payment>
+
+<!-- Order info -->
+<div class="row gutters">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header d-flex">
+        <h4 class="mr-auto">Thông tin đơn hàng: {{ hoaDon.ma }}</h4>
+        <div class="ml-auto">
+          <!-- Modal trigger -->
+          <button
+            type="button"
+            class="btn btn-warning ml-auto btn-rounded"
+            data-toggle="modal"
+            data-target="#changeOrderInfo"
+            *ngIf="hoaDon.loaiHoaDon != 'TAI_QUAY'"
+            [disabled]="
+              hoaDon.trangThai == 'DANG_GIAO' ||
+              hoaDon.trangThai == 'HOAN_THANH' ||
+              hoaDon.trangThai == 'HUY' ||
+              hoaDon.trangThai == 'TRA_HANG' ||
+              hoaDon.trangThai == 'CHO_HOAN_TIEN' ||
+              hoaDon.trangThai == 'DA_HOAN_TIEN' ||
+              isGiaoHangAndChuyenKhoan(hoaDon)
+            "
+          >
+            Đổi địa chỉ
+          </button>
+          <!-- Modal -->
+          <div
+            class="modal fade"
+            id="changeOrderInfo"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            style="display: none"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-xl" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">
+                    Cập nhật thông tin
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                  >
+                    <span aria-hidden="true">×</span>
+                  </button>
+                </div>
+                <!-- Main modal -->
+                <div class="modal-body">
+                  <!-- Danh sách địa chỉ -->
+                  <div class="row d-flex mt-2 mb-3">
+                    <div
+                      class="col-6"
+                      *ngFor="let dc of hoaDon?.khachHang?.diaChis; index as i"
+                      (click)="changeDiaChiVaPhiVanChuyen(dc)"
+                    >
+                      <label class="form-check">
+                        <input
+                          type="radio"
+                          class="form-check-input"
+                          name="khachHangDiaChi"
+                        />
+                        <div>Địa chỉ {{ i + 1 }}</div>
+                        <div class="text-muted">
+                          {{
+                            dc.duong +
+                              "," +
+                              dc.xa +
+                              "," +
+                              dc.huyen +
+                              "," +
+                              dc.tinh
+                          }}
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <!-- Form -->
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label class="form-label">Tên người nhận:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderNameTemp"
+                      />
+                      <!-- <small class="form-text text-danger">Help text</small> -->
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Số điện thoại:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderPhoneNumberTemp"
+                      />
+                      <!-- <small class="form-text text-danger">Help text</small> -->
+                    </div>
+                    <div class="col-md-12">
+                      <label class="form-label">Ghi chú:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderNoteTemp"
+                      />
+                      <!-- <small class="form-text text-danger">Help text</small> -->
+                    </div>
+
+                    <app-get-dia-chi-va-phi-van-chuyen
+                      [(diaChiVaPhiVanChuyen)]="diaChiVaPhiVanChuyen"
+                    ></app-get-dia-chi-va-phi-van-chuyen>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="changeDiaChi()"
+                  >
+                    Xác nhận
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    data-dismiss="modal"
+                    id="btnCloseChangeDiaChi"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body row pl-5 pr-5">
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Trạng thái: </span>
+          <app-trang-thai-hoa-don
+            [trangThai]="hoaDon.trangThai"
+          ></app-trang-thai-hoa-don>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Loại hóa đơn: </span>
+          <app-loai-hoa-don [loaiHoaDon]="hoaDon.loaiHoaDon"></app-loai-hoa-don>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Tên người nhận: </span>
+          <span>{{
+            hoaDon.tenNguoiNhan == "anonymousUser"
+              ? "Khách lẻ"
+              : hoaDon.tenNguoiNhan
+          }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Số điện thoại: </span
+          ><span>{{ hoaDon.sdtNguoiNhan }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Địa chỉ: </span
+          ><span>{{ hoaDon.diaChiNguoiNhan }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Email: </span
+          ><span>{{ hoaDon.emailNguoiNhan }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Ghi chú: </span>
+          <span>{{ hoaDon.ghiChu }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Ngày tạo: </span>
+          <span>{{ hoaDon.createdAt }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Người tạo: </span>
+          <span>{{ hoaDon.createdBy }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Ngày cập nhật cuối: </span>
+          <span>{{ hoaDon.updatedAt }}</span>
+        </div>
+        <div class="col-md-6 mb-3">
+          <span class="font-weight-bold">Người cập nhật cuối: </span>
+          <span>{{ hoaDon.lastUpdatedBy }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END order Info -->
+
+<app-order-product
+  [hoaDon]="hoaDon"
+  (hoaDonChange)="putHoaDon($event)"
+  (getHoaDon)="getHoaDonById($event)"
+></app-order-product>

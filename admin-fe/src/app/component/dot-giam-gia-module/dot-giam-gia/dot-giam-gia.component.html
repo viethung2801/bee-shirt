@@ -1,0 +1,34 @@
+<app-main-heading
+  [icon]="icon"
+  [mainHeading]="mainHeading"
+  [title]="tittle"
+></app-main-heading>
+
+<div class="row gutters p-3">
+  <div class="col-sm-12">
+    <!-- Filter Form -->
+    <app-filter
+      (filterFromChild)="getValueFromFilter($event)"
+      (filterReload)="reloadResetFilter()"
+      (onPageChangeSearch)="handleChangeSearchDGG($event)"
+    ></app-filter>
+    <!-- End Filter Form -->
+    <!-- Row start -->
+    <app-table
+      [titleTable]="titleTable"
+      [tHead]="tHead"
+      [listObject]="data"
+      [template]="'dotGiamGiaTable'"
+      [pageArray]="pageArray"
+      [pageNumber]="pageNumber"
+      [pageSize]="pageSize"
+      [search]="search"
+      [placeHolder]="'Mã..Tên..Phần Trăm.....'"
+      (onPageChange)="handleChangePageSizeDGG($event)"
+      (onPageNumberChange)="handleChangePageNumberDGG($event)"
+      (onRemoveDotGiamGia)="handleRemoveDGG($event)"
+      [filterObject]="filterObject"
+    ></app-table>
+    <!-- Row ends -->
+  </div>
+</div>
