@@ -47,4 +47,41 @@ public interface KichCoRepository extends JpaRepository<KichCo, Integer> {
             WHERE kc.trang_thai = 1
             """, nativeQuery = true)
     List<Integer> getAllActiveSizeIds();
+
+    @Query(value =
+            """
+            SELECT *
+            FROM kich_co kc
+            WHERE kc.trang_thai = 1
+            ORDER BY kc.id
+            """, nativeQuery = true)
+    List<KichCo> getAllActive();
+
+    @Query(value =
+            """
+            SELECT DISTINCT kc.*
+            FROM kich_co kc
+            JOIN san_pham_chi_tiet ct ON ct.kich_co_id = kc.id
+            WHERE kc.trang_thai = 1
+            AND ct.trang_thai = 1
+            AND ct.so_luong_ton > 0
+            AND ct.san_pham_id = :productId
+            ORDER BY kc.id
+            """, nativeQuery = true)
+    List<KichCo> getAvailableByProduct(@Param("productId") int productId);
+
+    @Query(value =
+            """
+            SELECT DISTINCT kc.*
+            FROM kich_co kc
+            JOIN san_pham_chi_tiet ct ON ct.kich_co_id = kc.id
+            WHERE kc.trang_thai = 1
+            AND ct.trang_thai = 1
+            AND ct.so_luong_ton > 0
+            AND ct.san_pham_id = :productId
+            AND ct.mau_sac_id = :colorId
+            ORDER BY kc.id
+            """, nativeQuery = true)
+    List<KichCo> getAvailableByProductAndColor(@Param("productId") int productId,
+                                               @Param("colorId") int colorId);
 }
