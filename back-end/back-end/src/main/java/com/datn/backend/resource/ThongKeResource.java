@@ -1,18 +1,22 @@
 package com.datn.backend.resource;
 
+import com.datn.backend.dto.response.AdminDashboardKpiResponse;
+import com.datn.backend.dto.response.AdminDashboardSummaryResponse;
+import com.datn.backend.dto.response.AdminTopProductResponse;
 import com.datn.backend.dto.response.CouponsSumarryResponse;
 import com.datn.backend.dto.response.DiscountSummaryResponse;
 import com.datn.backend.dto.response.ProductsSummaryResponse;
 import com.datn.backend.service.ChartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -169,5 +173,47 @@ public class ThongKeResource {
     public ResponseEntity<Long> getInvoicePerYear(
     ) {
         return ResponseEntity.ok(chartService.countAllInvoiceLastYear());
+    }
+
+    @GetMapping("/admin-dashboard/kpi")
+    public ResponseEntity<AdminDashboardKpiResponse> getAdminDashboardKpi(
+            @RequestParam(name = "fromDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(name = "toDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate
+    ) {
+        return ResponseEntity.ok(chartService.getAdminDashboardKpi(fromDate, toDate));
+    }
+
+    @GetMapping("/admin-dashboard/top-products")
+    public ResponseEntity<List<AdminTopProductResponse>> getAdminTopProducts(
+            @RequestParam(name = "fromDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(name = "toDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        return ResponseEntity.ok(chartService.getAdminTopProducts(fromDate, toDate, limit));
+    }
+
+    @GetMapping("/admin-dashboard/summary")
+    public ResponseEntity<AdminDashboardSummaryResponse> getAdminDashboardSummary(
+            @RequestParam(name = "fromDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(name = "toDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+            @RequestParam(name = "limit", required = false) Integer limit
+    ) {
+        return ResponseEntity.ok(chartService.getAdminDashboardSummary(fromDate, toDate, limit));
+    }
+
+    @GetMapping("/admin-dashboard/cancellation-rate")
+    public ResponseEntity<BigDecimal> getAdminDashboardCancellationRate(
+            @RequestParam(name = "fromDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(name = "toDate", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate
+    ) {
+        return ResponseEntity.ok(chartService.getAdminDashboardKpi(fromDate, toDate).getCancellationRate());
     }
 }

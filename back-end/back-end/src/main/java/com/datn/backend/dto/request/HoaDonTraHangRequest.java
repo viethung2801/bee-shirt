@@ -14,6 +14,11 @@ import java.util.List;
 @Setter
 @ToString
 @Builder
+
+
+
+
+
 public class HoaDonTraHangRequest {
 
     @DecimalMin(value = "1", message = "Tổng tiền không hợp lệ")

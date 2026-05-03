@@ -1,5 +1,8 @@
 package com.datn.backend.service;
 
+import com.datn.backend.dto.response.AdminDashboardKpiResponse;
+import com.datn.backend.dto.response.AdminDashboardSummaryResponse;
+import com.datn.backend.dto.response.AdminTopProductResponse;
 import com.datn.backend.dto.response.CouponsSumarryResponse;
 import com.datn.backend.dto.response.DiscountSummaryResponse;
 import com.datn.backend.dto.response.ProductsSummaryResponse;
@@ -66,4 +69,10 @@ public interface ChartService {
     Long countAllInvoiceThisYear();
 
     Long countAllInvoiceLastYear();
+
+    AdminDashboardKpiResponse getAdminDashboardKpi(LocalDate fromDate, LocalDate toDate);
+
+    List<AdminTopProductResponse> getAdminTopProducts(LocalDate fromDate, LocalDate toDate, Integer limit);
+
+    AdminDashboardSummaryResponse getAdminDashboardSummary(LocalDate fromDate, LocalDate toDate, Integer limit);
 }

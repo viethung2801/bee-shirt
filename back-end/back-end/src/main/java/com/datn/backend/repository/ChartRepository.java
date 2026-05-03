@@ -1,9 +1,11 @@
 package com.datn.backend.repository;
 
+import com.datn.backend.dto.response.AdminTopProductProjection;
 import com.datn.backend.dto.response.CouponsSumarryResponse;
 import com.datn.backend.dto.response.DiscountSummaryResponse;
 import com.datn.backend.dto.response.ProductsSummaryResponse;
 import com.datn.backend.model.hoa_don.HoaDon;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -368,4 +371,64 @@ public interface ChartRepository extends JpaRepository<HoaDon, Integer> {
                         ORDER BY DATE_ADD( :startOfWeek , INTERVAL num DAY);
             """, nativeQuery = true)
     List<BigDecimal> getSale7DaysInAnyWeek(@Param("startOfWeek") Date startOfWeek);
+
+    @Query(value = """
+            SELECT COUNT(*)
+            FROM hoa_don hd
+            WHERE hd.created_at >= :fromDate
+            AND hd.created_at <= :toDate
+            """, nativeQuery = true)
+    Long countAllOrdersInRange(@Param("fromDate") LocalDateTime fromDate,
+                               @Param("toDate") LocalDateTime toDate);
+
+    @Query(value = """
+            SELECT COUNT(*)
+            FROM hoa_don hd
+            WHERE hd.created_at >= :fromDate
+            AND hd.created_at <= :toDate
+            AND hd.trang_thai = 'HOAN_THANH'
+            """, nativeQuery = true)
+    Long countCompletedOrdersInRange(@Param("fromDate") LocalDateTime fromDate,
+                                     @Param("toDate") LocalDateTime toDate);
+
+    @Query(value = """
+            SELECT COUNT(*)
+            FROM hoa_don hd
+            WHERE hd.created_at >= :fromDate
+            AND hd.created_at <= :toDate
+            AND hd.trang_thai = 'HUY'
+            """, nativeQuery = true)
+    Long countCancelledOrdersInRange(@Param("fromDate") LocalDateTime fromDate,
+                                     @Param("toDate") LocalDateTime toDate);
+
+    @Query(value = """
+            SELECT COALESCE(SUM(hdct.gia_ban * hdct.so_luong), 0)
+            FROM hoa_don hd
+            JOIN hoa_don_chi_tiet hdct ON hdct.id_hoa_don = hd.id
+            WHERE hd.created_at >= :fromDate
+            AND hd.created_at <= :toDate
+            AND hd.trang_thai = 'HOAN_THANH'
+            """, nativeQuery = true)
+    BigDecimal getRevenueInRange(@Param("fromDate") LocalDateTime fromDate,
+                                 @Param("toDate") LocalDateTime toDate);
+
+    @Query(value = """
+            SELECT sp.id AS productId,
+                   sp.ma AS productCode,
+                   sp.ten AS productName,
+                   COALESCE(SUM(hdct.so_luong), 0) AS quantitySold,
+                   COALESCE(SUM(hdct.gia_ban * hdct.so_luong), 0) AS revenue
+            FROM hoa_don hd
+            JOIN hoa_don_chi_tiet hdct ON hdct.id_hoa_don = hd.id
+            JOIN san_pham_chi_tiet spct ON spct.id = hdct.id_spct
+            JOIN san_pham sp ON sp.id = spct.san_pham_id
+            WHERE hd.created_at >= :fromDate
+            AND hd.created_at <= :toDate
+            AND hd.trang_thai = 'HOAN_THANH'
+            GROUP BY sp.id, sp.ma, sp.ten
+            ORDER BY quantitySold DESC, revenue DESC
+            """, nativeQuery = true)
+    List<AdminTopProductProjection> getTopProductsForDashboard(@Param("fromDate") LocalDateTime fromDate,
+                                                                @Param("toDate") LocalDateTime toDate,
+                                                                Pageable pageable);
 }
