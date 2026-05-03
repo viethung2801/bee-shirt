@@ -18,6 +18,7 @@ import java.util.Map;
 @Configuration
 public class ApplicationConfiguration {
 
+
     @Bean("auditorAwareImpl")
     public AuditorAware<String> auditorProvider() {
         return new AuditorAwareImpl();

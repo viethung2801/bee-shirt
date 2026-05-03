@@ -26,6 +26,7 @@ public class HoaDonTraHangRequest {
 
     private BigDecimal tongTienTraKhach;
 
+    @NotNull(message = "Hoa don ID khong hop le")
     private Integer hoaDonId;
 
     private Integer nhanVienId;
@@ -44,4 +45,10 @@ public class HoaDonTraHangRequest {
 
     @NotEmpty(message = "Vui lòng thêm sản phẩm vào đơn hàng")
     private List<HoaDonChiTietRequest> hoaDonChiTiets;
+
+    public HoaDonTraHangRequest(Integer hoaDonId, Integer nhanVienId, Integer khachHangId) {
+        this.hoaDonId = hoaDonId;
+        this.nhanVienId = nhanVienId;
+        this.khachHangId = khachHangId;
+    }
 }

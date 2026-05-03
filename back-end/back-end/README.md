@@ -165,6 +165,23 @@ WebSocket endpoints:
 /notification2
 ```
 
+## Return/Refund Workflow
+
+Nhóm API `\`/tra-hang\`` đã hỗ trợ luồng duyệt yêu cầu trả hàng/hoàn tiền:
+
+- `POST /tra-hang/tao-hoa-don-tra-hang`: Khách tạo yêu cầu trả hàng (trạng thái `CHO_DUYET`).
+- `GET /tra-hang/yeu-cau?trangThai=`: Admin/nhân viên lấy danh sách yêu cầu (có thể lọc trạng thái).
+- `PUT /tra-hang/cap-nhat-trang-thai`: Duyệt/từ chối/chuyển bước workflow.
+
+Giá trị `trangThai` hợp lệ trong workflow:
+
+- `CHO_DUYET`
+- `DA_DUYET`
+- `TU_CHOI`
+- `CHO_HOAN_TIEN`
+- `DA_HOAN_TIEN`
+- `HOAN_TAT`
+
 ## Development Workflow
 
 1. Tạo branch riêng cho mỗi feature hoặc bugfix.

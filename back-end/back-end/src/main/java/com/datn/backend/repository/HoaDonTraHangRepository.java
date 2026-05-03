@@ -1,8 +1,6 @@
 package com.datn.backend.repository;
 
-import com.datn.backend.enumeration.TrangThaiHoaDon;
 import com.datn.backend.model.hoa_don.HoaDon;
-import com.datn.backend.model.phieu_giam_gia.PhieuGiamGia;
 import com.datn.backend.model.san_pham.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
