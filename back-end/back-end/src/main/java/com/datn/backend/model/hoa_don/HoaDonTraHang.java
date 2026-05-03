@@ -1,10 +1,12 @@
 package com.datn.backend.model.hoa_don;
 
+import com.datn.backend.enumeration.TrangThaiTraHang;
 import com.datn.backend.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -30,6 +32,12 @@ public class HoaDonTraHang extends BaseEntity {
     private BigDecimal tongTienPhieuGiamGiaMoi;
     private BigDecimal tongTienTraKhach;
     private String ghiChu;
+    private String lyDoTuChoi;
+    private LocalDateTime ngayDuyet;
+    private LocalDateTime ngayHoanTien;
+
+    @Enumerated(EnumType.STRING)
+    private TrangThaiTraHang trangThai;
 
     @OneToMany(mappedBy = "hoaDonTraHang", cascade = CascadeType.ALL)
     private List<HoaDonChiTiet> hoaDonChiTiets;

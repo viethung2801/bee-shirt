@@ -3,10 +3,10 @@ package com.datn.backend.resource;
 import com.datn.backend.dto.request.ChangeOrderStatusRequest;
 import com.datn.backend.dto.request.HoaDonTraHangRequest;
 import com.datn.backend.dto.request.PlaceOrderRequest;
+import com.datn.backend.dto.request.UpdateReturnRefundStatusReq;
 import com.datn.backend.dto.response.HoaDonResponse;
 import com.datn.backend.dto.response.HoaDonTraHangResponse;
 import com.datn.backend.dto.response.SpctResponse;
-import com.datn.backend.model.hoa_don.HoaDonTraHang;
 import com.datn.backend.service.HoaDonTraHangService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,13 @@ public class HoaDonTraHangResource {
         return ResponseEntity.ok(hoaDonTraHangService.getByIdHoaDon(id));
     }
 
+    @GetMapping("/yeu-cau")
+    public ResponseEntity<List<HoaDonTraHangResponse>> getAllReturnRequests(
+            @RequestParam(value = "trangThai", required = false) String trangThai
+    ) {
+        return ResponseEntity.ok(hoaDonTraHangService.getAll(trangThai));
+    }
+
     @GetMapping("/danh-sach-san-pham")
     public ResponseEntity<List<SpctResponse>> getDanhSachSanPham(
             @RequestParam("id") Integer idHoaDon
@@ -64,6 +71,13 @@ public class HoaDonTraHangResource {
     public ResponseEntity<HoaDonTraHangResponse> taoHoaDonTraHang(@Valid @RequestBody HoaDonTraHangRequest hoaDonTraHangRequest) {
         HoaDonTraHangResponse hoaDonTraHangResponse = hoaDonTraHangService.add(hoaDonTraHangRequest);
         return ResponseEntity.ok(hoaDonTraHangResponse);
+    }
+
+    @PutMapping("/cap-nhat-trang-thai")
+    public ResponseEntity<HoaDonTraHangResponse> updateReturnRefundStatus(
+            @Valid @RequestBody UpdateReturnRefundStatusReq req
+    ) {
+        return ResponseEntity.ok(hoaDonTraHangService.updateWorkflowStatus(req));
     }
 
     @PostMapping("/place-order-tra-hang")
