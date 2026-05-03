@@ -1,16 +1,25 @@
 package com.datn.backend.service.impl;
 
+import com.datn.backend.dto.response.AdminDashboardKpiResponse;
+import com.datn.backend.dto.response.AdminDashboardSummaryResponse;
+import com.datn.backend.dto.response.AdminTopProductProjection;
+import com.datn.backend.dto.response.AdminTopProductResponse;
 import com.datn.backend.dto.response.CouponsSumarryResponse;
 import com.datn.backend.dto.response.DiscountSummaryResponse;
 import com.datn.backend.dto.response.ProductsSummaryResponse;
 import com.datn.backend.repository.ChartRepository;
 import com.datn.backend.service.ChartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -18,18 +27,15 @@ import java.util.List;
 @Service
 public class ChartServiceImpl implements ChartService {
 
-
     private final ChartRepository chartRepository;
 
     @Autowired
     public ChartServiceImpl(ChartRepository chartRepository) {
-
         this.chartRepository = chartRepository;
     }
 
     @Override
     public Long countInvoiceComplete() {
-
         return chartRepository.countInvoiceComplete();
     }
 
@@ -48,32 +54,26 @@ public class ChartServiceImpl implements ChartService {
         return chartRepository.countInvoiceEx();
     }
 
-
     @Override
     public List<Long> countInvoiceInThisYear() {
-
         return chartRepository.countInvoiceInThisYear();
     }
 
     @Override
     public List<Long> countInvoiceInLastYear() {
-
         return chartRepository.countInvoiceInLastYear();
     }
 
     @Override
     public List<Long> countInvoice4WeekInThisMonth() {
-//        Trả về dữ liệu 4 tuần của tháng này và + số đơn ngày cuối tháng (vì không thể query tới ngày cuối)
         List<Long> list = chartRepository.countInvoice4WeekInMonth(
                 getStartDate(), getEndDate(getStartDate()), getTotalDay(getEndDate(getStartDate())));
         list.set(list.size() - 1, list.get(list.size() - 1) + countLastDayOfMonth(getStartDate()));
         return list;
     }
 
-
     @Override
     public List<Long> countInvoice4WeekInLastMonth() {
-        //        Trả về dữ liệu 4 tuần của tháng trước và + số đơn ngày cuối tháng (vì không thể query tới ngày cuối)
         List<Long> list = chartRepository.countInvoice4WeekInMonth(
                 getStartDateLastMonth(), getEndDate(getStartDateLastMonth()), getTotalDay(getEndDate(getStartDateLastMonth())));
         list.set(list.size() - 1, list.get(list.size() - 1) + countLastDayOfMonth(getStartDateLastMonth()));
@@ -82,14 +82,12 @@ public class ChartServiceImpl implements ChartService {
 
     @Override
     public List<Long> countInvoice7DayThisWeek() {
-//        Trả số hoá đơn của 7 ngày trong tuần này
         Date startOfWeek = getStartOfWeek();
         return chartRepository.countInvoice7DayThisWeek(startOfWeek);
     }
 
     @Override
     public List<Long> countInvoice7DayLastWeek() {
-        //        Trả số hoá đơn của 7 ngày trong tuần trước
         Date startOfLastWeek = getStartOfLastWeek();
         return chartRepository.countInvoice7DayLastWeek(startOfLastWeek);
     }
@@ -217,8 +215,67 @@ public class ChartServiceImpl implements ChartService {
         return chartRepository.countAllInvoiceAnyYear(LocalDate.now().minusYears(1));
     }
 
+    @Override
+    public AdminDashboardKpiResponse getAdminDashboardKpi(LocalDate fromDate, LocalDate toDate) {
+        DateRange dateRange = resolveDateRange(fromDate, toDate);
+
+        Long totalOrders = chartRepository.countAllOrdersInRange(dateRange.fromDateTime(), dateRange.toDateTime());
+        Long completedOrders = chartRepository.countCompletedOrdersInRange(dateRange.fromDateTime(), dateRange.toDateTime());
+        Long cancelledOrders = chartRepository.countCancelledOrdersInRange(dateRange.fromDateTime(), dateRange.toDateTime());
+        BigDecimal totalRevenue = chartRepository.getRevenueInRange(dateRange.fromDateTime(), dateRange.toDateTime());
+
+        totalOrders = totalOrders == null ? 0L : totalOrders;
+        completedOrders = completedOrders == null ? 0L : completedOrders;
+        cancelledOrders = cancelledOrders == null ? 0L : cancelledOrders;
+        totalRevenue = totalRevenue == null ? BigDecimal.ZERO : totalRevenue;
+
+        BigDecimal averageOrderValue = BigDecimal.ZERO;
+        if (completedOrders > 0) {
+            averageOrderValue = totalRevenue.divide(BigDecimal.valueOf(completedOrders), 2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal cancellationRate = BigDecimal.ZERO;
+        if (totalOrders > 0) {
+            cancellationRate = BigDecimal.valueOf(cancelledOrders)
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(totalOrders), 2, RoundingMode.HALF_UP);
+        }
+
+        return AdminDashboardKpiResponse.builder()
+                .totalRevenue(totalRevenue)
+                .totalOrders(totalOrders)
+                .completedOrders(completedOrders)
+                .cancelledOrders(cancelledOrders)
+                .averageOrderValue(averageOrderValue)
+                .cancellationRate(cancellationRate)
+                .build();
+    }
+
+    @Override
+    public List<AdminTopProductResponse> getAdminTopProducts(LocalDate fromDate, LocalDate toDate, Integer limit) {
+        DateRange dateRange = resolveDateRange(fromDate, toDate);
+        int topLimit = (limit == null || limit <= 0) ? 10 : Math.min(limit, 50);
+        Pageable pageable = PageRequest.of(0, topLimit);
+
+        return chartRepository.getTopProductsForDashboard(dateRange.fromDateTime(), dateRange.toDateTime(), pageable)
+                .stream()
+                .map(this::mapTopProductResponse)
+                .toList();
+    }
+
+    @Override
+    public AdminDashboardSummaryResponse getAdminDashboardSummary(LocalDate fromDate, LocalDate toDate, Integer limit) {
+        DateRange dateRange = resolveDateRange(fromDate, toDate);
+
+        return AdminDashboardSummaryResponse.builder()
+                .fromDate(dateRange.fromDate())
+                .toDate(dateRange.toDate())
+                .kpi(getAdminDashboardKpi(dateRange.fromDate(), dateRange.toDate()))
+                .topProducts(getAdminTopProducts(dateRange.fromDate(), dateRange.toDate(), limit))
+                .build();
+    }
+
     public Long countLastDayOfMonth(LocalDate today) {
-//      Đếm số hoá đơn của ngày cuối cùng trong tháng
         return chartRepository.countInvoiceLastDayOfMonth(today);
     }
 
@@ -227,8 +284,31 @@ public class ChartServiceImpl implements ChartService {
     }
 
     public Long counCustomertLastDayOfMonth(LocalDate today) {
-//      Đếm số hoá đơn của ngày cuối cùng trong tháng
         return chartRepository.countCustomerLastDayOfMonth(today);
+    }
+
+    private AdminTopProductResponse mapTopProductResponse(AdminTopProductProjection projection) {
+        return AdminTopProductResponse.builder()
+                .productId(projection.getProductId())
+                .productCode(projection.getProductCode())
+                .productName(projection.getProductName())
+                .quantitySold(projection.getQuantitySold())
+                .revenue(projection.getRevenue())
+                .build();
+    }
+
+    private DateRange resolveDateRange(LocalDate fromDate, LocalDate toDate) {
+        LocalDate startDate = fromDate == null ? LocalDate.now().withDayOfMonth(1) : fromDate;
+        LocalDate endDate = toDate == null ? LocalDate.now() : toDate;
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("From date must be before or equal to to date");
+        }
+        return new DateRange(
+                startDate,
+                endDate,
+                startDate.atStartOfDay(),
+                endDate.atTime(LocalTime.MAX)
+        );
     }
 
     private static Date getStartOfWeek() {
@@ -257,5 +337,8 @@ public class ChartServiceImpl implements ChartService {
 
     private static int getTotalDay(LocalDate endDate) {
         return endDate.getDayOfMonth();
+    }
+
+    private record DateRange(LocalDate fromDate, LocalDate toDate, LocalDateTime fromDateTime, LocalDateTime toDateTime) {
     }
 }

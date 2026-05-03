@@ -182,6 +182,23 @@ Giá trị `trangThai` hợp lệ trong workflow:
 - `DA_HOAN_TIEN`
 - `HOAN_TAT`
 
+## Admin Dashboard API
+
+Admin dashboard API duoc bo sung trong nhom `/thong-ke/admin-dashboard`:
+
+- `GET /thong-ke/admin-dashboard/kpi`: KPI doanh thu va don hang trong khoang ngay.
+- `GET /thong-ke/admin-dashboard/top-products`: Top san pham ban chay theo so luong va doanh thu.
+- `GET /thong-ke/admin-dashboard/summary`: Tong hop KPI + top san pham cho man hinh dashboard.
+- `GET /thong-ke/admin-dashboard/cancellation-rate`: Ti le huy don trong khoang ngay.
+
+Query params ho tro:
+
+- `fromDate` (yyyy-MM-dd, optional)
+- `toDate` (yyyy-MM-dd, optional)
+- `limit` (optional, mac dinh 10, toi da 50 cho endpoint top-products/summary)
+
+Gia tri KPI tra ve co `cancellationRate` theo don vi `%`.
+
 ## Development Workflow
 
 1. Tạo branch riêng cho mỗi feature hoặc bugfix.
